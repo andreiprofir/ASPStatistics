@@ -1,0 +1,161 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] - ASP_Statistics</title>
+    <environment include="Development">
+        <script src="~/lib/jquery/jquery.min.js"></script>
+        <script src="~/lib/moment.js/moment.min.js"></script>
+        <script src="~/lib/moment.js/moment-with-locales.min.js"></script>
+        <script src="~/lib/Chart.js/Chart.js"></script>
+        <script src="~/lib/Chart.js/Chart.min.js"></script>
+        <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+        <script src="~/js/site.js" asp-append-version="true"></script>
+
+        <!-- Resources -->
+        <script src="https://www.amcharts.com/lib/3/amcharts.js"></script>
+        <script src="https://www.amcharts.com/lib/3/serial.js"></script>
+        <script src="https://www.amcharts.com/lib/3/plugins/export/export.min.js"></script>
+        <link rel="stylesheet" href="https://www.amcharts.com/lib/3/plugins/export/export.css" type="text/css" media="all" />
+        <script src="https://www.amcharts.com/lib/3/themes/none.js"></script>
+
+        <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/js/gijgo.min.js" type="text/javascript"></script>
+    </environment>
+    <environment include="Development">
+        <link rel="stylesheet" href="~/lib/bootstrap/dist/css/bootstrap.css" />
+        <link rel="stylesheet" href="~/css/site.css" />
+        <link href="~/css/all.css" rel="stylesheet" />
+        <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/css/gijgo.min.css" rel="stylesheet" type="text/css" />
+        <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.5.0/css/all.css" integrity="sha384-B4dIYHKNBt8Bc12p+WXckhzcICo0wtJAoU8YZTY5qE0Id1GSseTk6S+L3BlXeVIU" crossorigin="anonymous">
+    </environment>
+</head>
+<body>
+<div class="container-fluid fixed-top p-0">
+    <nav class="navbar navbar-expand navbar-dark bg-dark">
+        <a class="navbar-brand" asp-action="Index" asp-controller="Home">
+            <img src="~/images/logo.svg" height="30"/>
+        </a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li id="nav-forecasts" class="nav-item">
+                    <a class="nav-link" asp-action="Index" asp-controller="Home">Forecasts</a>
+                </li>
+                <li id="nav-statistics" class="nav-item">
+                    <a class="nav-link" asp-controller="Home" asp-action="Statistics">Statistics</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</div>
+<div id="body-content" class="container-fluid p-3">
+    @RenderBody()
+    <div id="sync-container" class="d-inline-block hover-pointer m-3" data-toggle="modal" data-target="#syncModal">
+        <img src="~/images/sync.svg" />
+    </div>
+    
+    <!-- Modal -->
+    <div class="modal fade" id="syncModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalCenterTitle">Synchronize Options</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <div class="form-row mb-2">
+                        <div class="col">
+                            <div class="form-check form-check-inline">
+                                <input class="form-check-input" type="checkbox" id="syncAllData">
+                                <label class="form-check-label" for="syncAllData">Sync All Data</label>
+                            </div>
+                        </div>
+                        <div class="col d-flex justify-content-end">
+                            <button id="syncForecastResultsButton" type="button" class="btn btn-warning text-white bold">Sync Forecast Results</button>
+                        </div>
+                    </div>
+                    <div class="form-row mb-2">
+                        <div class="col d-flex justify-content-end">
+                            <button id="syncForecastsButton" type="button" class="btn btn-success text-white bold">Sync Forecasts</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <hr />
+    <footer>
+        <p>&copy; 2018 - ASP_Statistics</p>
+    </footer>
+    
+    <div id="loader-container" class="fixed-top h-100 w-100 d-flex align-items-center justify-content-center">
+        <div class="loader">Loading...</div>
+    </div>
+</div>
+
+<environment include="Development">
+    <script src="~/lib/jquery/jquery.min.js"></script>
+    <script src="~/lib/moment.js/moment.min.js"></script>
+    <script src="~/lib/moment.js/moment-with-locales.min.js"></script>
+    <script src="~/lib/Chart.js/Chart.js"></script>
+    <script src="~/lib/Chart.js/Chart.min.js"></script>
+    <script src="~/lib/bootstrap/dist/js/bootstrap.js"></script>
+    <script src="~/js/site.js" asp-append-version="true"></script>
+
+    <script src="https://canvasjs.com/assets/script/canvasjs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/js/gijgo.min.js" type="text/javascript"></script>
+    <link href="https://cdn.jsdelivr.net/npm/gijgo@1.9.10/css/gijgo.min.css" rel="stylesheet" type="text/css"/>
+</environment>
+@*<environment exclude="Development">
+        <script src="https://ajax.aspnetcdn.com/ajax/jquery/jquery-3.3.1.min.js"
+                asp-fallback-src="~/lib/jquery/dist/jquery.min.js"
+                asp-fallback-test="window.jQuery"
+                crossorigin="anonymous"
+                integrity="sha384-tsQFqpEReu7ZLhBV2VZlAu7zcOV+rXbYlF2cqB8txI/8aZajjp4Bqd+V6D5IgvKT">
+        </script>
+        <script src="https://ajax.aspnetcdn.com/ajax/bootstrap/3.3.7/bootstrap.min.js"
+                asp-fallback-src="~/lib/bootstrap/dist/js/bootstrap.min.js"
+                asp-fallback-test="window.jQuery && window.jQuery.fn && window.jQuery.fn.modal"
+                crossorigin="anonymous"
+                integrity="sha384-Tc5IQib027qvyjSMfHjOMaLkfuWVxZxUPnCJA7l2mCWNIpG9mGCD8wGNIcPD7Txa">
+        </script>
+        <script src="~/js/site.min.js" asp-append-version="true"></script>
+    </environment>*@
+
+@RenderSection("Scripts", required: false)
+</body>
+</html>
+
+<script>
+    $(function() {
+        toggleLoader();
+
+        $("#syncForecastResultsButton").click(function() {
+            toggleLoader();
+
+            var data = {
+                rewriteAllData: $("#syncAllData").is(":checked")
+            };
+
+            $.post('@Url.Action("SyncForecastResults", "Home")', data,
+                function() {
+                    toggleLoader();
+                });
+        });
+
+        $("#syncForecastsButton").click(function() {
+            toggleLoader();
+
+            $.post('@Url.Action("SyncForecasts", "Home")',
+                function() {
+                    toggleLoader();
+                });
+        });
+    });
+</script>

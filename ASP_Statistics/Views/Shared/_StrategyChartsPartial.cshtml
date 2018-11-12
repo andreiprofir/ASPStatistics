@@ -1,0 +1,701 @@
+﻿@using ASP_Statistics.Classes
+@using ASP_Statistics.Enums
+@using Newtonsoft.Json
+@model Dictionary<ASP_Statistics.Enums.ChartType, ChartViewModel>
+
+<div class="row">
+    <div class="col-12">
+        <div id="strategyBanksChart" style="width: 100%; height:800px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="strategyBetsChart" style="width: 100%; height:800px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="strategyProfitsChart" style="width: 100%; height:800px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="loseBankCount" style="width: 100%; height:400px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="bankValueMaxMin" style="width: 100%; height:400px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="betMinAvgMax" style="width: 100%; height:400px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="bankMax" style="width: 100%; height:400px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="profitMinMaxChart" style="width: 100%; height:400px;"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("strategyBanksChart", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "BANK"
+            },
+            subtitles: [
+                { text: "Grafic care arata dinamica bancului" }
+            ],
+            axisX:{
+                labelAngle: 0,
+                labelFontSize: 12,
+                labelFontColor: "black",
+                crosshair: {
+                    enabled: true
+                }
+            },
+            axisY:{
+                includeZero: false,
+                crosshair: {
+                    enabled: true
+                }
+            },
+            exportEnabled: true,
+            legend:{
+                cursor:"pointer",
+                verticalAlign: "bottom",
+                horizontalAlign: "left",
+                dockInsidePlotArea: true,
+                itemclick: toogleDataSeries,
+                fontSize: 12
+            },
+            data: [
+                @*{
+                    showInLegend: true,
+                    name: "@ChartType.FlatBankValue.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.FlatBankValue].ChartData)),
+                    color: "red"
+                },*@
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValue.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValue].ChartData)),
+                    color: "green"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValue2.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValue2].ChartData)),
+                    color: "yellow"
+                },
+                @*{
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValue3.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValue3].ChartData)),
+                    color: "purple"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValue4.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValue4].ChartData)),
+                    color: "pink"
+                },*@
+                @*{
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValue.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValue].ChartData)),
+                    color: "orange"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValue2.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValue2].ChartData)),
+                    color: "black"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValue3.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValue3].ChartData)),
+                    color: "blue"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValue4.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValue4].ChartData)),
+                    color: "#d64161"
+                },*@
+            ],
+
+        });
+        chart.render();
+
+        function toogleDataSeries(e){
+            if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            } else{
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("strategyBetsChart", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "BET"
+            },
+            exportEnabled: true,
+            subtitles: [
+                { text: "Grafic care arata marimea maximala a unei stavshi" }
+            ],
+            axisX: {
+                labelAngle: 0,
+                labelFontSize: 12,
+                labelFontColor: "black",
+                crosshair: {
+                    enabled: true
+                }
+            },
+            axisY:{
+                includeZero: false,
+                crosshair: {
+                    enabled: true
+                }
+            },
+            legend:{
+                cursor:"pointer",
+                verticalAlign: "top",
+                horizontalAlign: "left",
+                dockInsidePlotArea: true,
+                itemclick: toogleDataSeries,
+                fontSize: 12
+            },
+            data: [
+                {
+                    showInLegend: true,
+                    name: "@ChartType.FlatBankValueBet.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.FlatBankValueBet].ChartData)),
+                    color: "red"
+                },
+                @*{
+                    showInLegend: true,
+                    name: "@ChartType.DagonBankValueBet.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.DagonBankValueBet].ChartData)),
+                    color: "black"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftDagonBankValueBet.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftDagonBankValueBet].ChartData)),
+                    color: "blue"
+                },*@
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValueBet.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValueBet].ChartData)),
+                    color: "green"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValueBet2.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValueBet2].ChartData)),
+                    color: "yellow"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValueBet3.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValueBet3].ChartData)),
+                    color: "purple"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValueBet4.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValueBet4].ChartData)),
+                    color: "pink"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValueBet.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValueBet].ChartData)),
+                    color: "orange"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValueBet2.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValueBet2].ChartData)),
+                    color: "black"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValueBet3.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValueBet3].ChartData)),
+                    color: "blue"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValueBet4.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValueBet4].ChartData)),
+                    color: "#d64161"
+                },
+            ],
+
+        });
+        chart.render();
+
+        function toogleDataSeries(e){
+            if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            } else{
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("strategyProfitsChart", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "Profit"
+            },
+            exportEnabled: true,
+            subtitles: [
+                { text: "Grafic care arata dinamica profitului" }
+            ],
+            axisX: {
+                labelAngle: 0,
+                labelFontSize: 12,
+                labelFontColor: "black",
+                crosshair: {
+                    enabled: true
+                }
+            },
+            axisY:{
+                includeZero: false,
+                crosshair: {
+                    enabled: true
+                }
+            },
+            legend:{
+                cursor:"pointer",
+                verticalAlign: "top",
+                horizontalAlign: "left",
+                dockInsidePlotArea: true,
+                itemclick: toogleDataSeries,
+                fontSize: 12
+            },
+            data: [
+                {
+                    showInLegend: true,
+                    name: "@ChartType.FlatBankValueClean.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.FlatBankValueClean].ChartData)),
+                    color: "red"
+                },
+                @*{
+                    showInLegend: true,
+                    name: "@ChartType.DagonBankValueBet.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.DagonBankValueBet].ChartData)),
+                    color: "black"
+                },*@
+                @*{
+                    showInLegend: true,
+                    name: "@ChartType.SoftDagonBankValueBet.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftDagonBankValueBet].ChartData)),
+                    color: "blue"
+                },*@
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValueClean.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValueClean].ChartData)),
+                    color: "green"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValueClean2.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValueClean2].ChartData)),
+                    color: "yellow"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValueClean3.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValueClean3].ChartData)),
+                    color: "purple"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonBankValueClean4.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValueClean4].ChartData)),
+                    color: "pink"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValueClean.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValueClean].ChartData)),
+                    color: "orange"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValueClean2.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValueClean2].ChartData)),
+                    color: "black"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValueClean3.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValueClean3].ChartData)),
+                    color: "blue"
+                },
+                {
+                    showInLegend: true,
+                    name: "@ChartType.SoftFlatDagonModBankValueClean4.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValueClean4].ChartData)),
+                    color: "#d64161"
+                },
+            ],
+
+        });
+        chart.render();
+
+        function toogleDataSeries(e){
+            if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            } else{
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("loseBankCount", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.LoseBankCount].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.LoseBankCount].Description" }
+            ],
+            axisX: {
+                labelAngle: 0,
+                labelFontSize: 12,
+                labelFontColor: "black",
+                crosshair: {
+                    enabled: true
+                }
+            },
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column", 
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.LoseBankCount].ChartData))
+                }
+            ]
+        });
+        chart.render();
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("bankMax", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.BankMaxChart].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.BankMaxChart].Description" }
+            ],
+            axisX: {
+                labelAngle: 0,
+                labelFontSize: 12,
+                labelFontColor: "black",
+                crosshair: {
+                    enabled: true
+                }
+            },
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.BankMaxChart].ChartData))
+                }
+            ]
+        });
+        chart.render();
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("bankValueMaxMin", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.BankValueChart].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.BankValueChart].Description" }
+            ],
+            axisX: {
+                labelAngle: 0,
+                labelFontSize: 12,
+                labelFontColor: "black",
+                crosshair: {
+                    enabled: true
+                }
+            },
+            legend:{
+                cursor: "pointer",
+                itemclick: toggleDataSeries
+            },
+            exportEnabled: true,
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    name: "@StatType.BankValueMin",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.BankValueChart].ChartData))
+                },
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    name: "@StatType.BankValueMax",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.BankValueChart].SecondChartData))
+                }
+            ]
+        });
+        chart.render();
+
+        function toggleDataSeries(e) {
+            if(typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            }
+            else {
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("betMinAvgMax", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.BetMinAvgMaxChart].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.BetMinAvgMaxChart].Description" }
+            ],
+            axisX: {
+                labelAngle: 0,
+                labelFontSize: 12,
+                labelFontColor: "black",
+                crosshair: {
+                    enabled: true
+                }
+            },
+            legend:{
+                cursor: "pointer",
+                itemclick: toggleDataSeries
+            },
+            exportEnabled: true,
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    name: "@StatType.BetMin",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.BetMinAvgMaxChart].ChartData))
+                },
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    name: "@StatType.BetAvg",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.BetMinAvgMaxChart].SecondChartData))
+                },
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    name: "@StatType.BetMax",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.BetMinAvgMaxChart].ThirdChartData))
+                }
+            ]
+        });
+        chart.render();
+
+        function toggleDataSeries(e) {
+            if(typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            }
+            else {
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("profitMinMaxChart", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.ProfitMinMaxChart].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.ProfitMinMaxChart].Description" }
+            ],
+            axisX: {
+                labelAngle: 0,
+                labelFontSize: 12,
+                labelFontColor: "black",
+                crosshair: {
+                    enabled: true
+                }
+            },
+            legend:{
+                cursor: "pointer",
+                itemclick: toggleDataSeries
+            },
+            exportEnabled: true,
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    name: "@StatType.ProfitMin",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.ProfitMinMaxChart].ChartData))
+                },
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    name: "@StatType.ProfitMax",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.ProfitMinMaxChart].SecondChartData))
+                }
+            ]
+        });
+        chart.render();
+
+        function toggleDataSeries(e) {
+            if(typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            }
+            else {
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+    });
+</script>

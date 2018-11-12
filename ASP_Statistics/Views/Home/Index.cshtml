@@ -1,0 +1,44 @@
+﻿@model List<ForecastViewModel>
+@{
+    ViewData["Title"] = "Forecasts";
+}
+<form asp-controller="Home" asp-action="Index" method="post">
+    <button id="saveBetsButton" class="shadow btn btn-danger btn-lg m-3" type="submit">SAVE BETS</button>
+    @{
+        var index = 0;
+
+        foreach (var group in Model.GroupBy(x => new {x.ShowAt.Year, x.ShowAt.Month, x.ShowAt.Day}))
+        {
+            <div class="card-deck pb-5 border-bottom border-dark bs-2">
+                <div class="col-12">
+                    <h1 class="text-center">@group.FirstOrDefault()?.GameAt.ToString("d")</h1>
+                </div>
+                @for (var i = 0; i < group.Count(); i++)
+                {
+                    @Html.EditorFor(x => Model[index], "_ForecastInGridPartial")
+                    index++;
+                }
+            </div>
+        }
+    }
+</form>
+
+@section Scripts
+{
+    <script>
+        $(function() {
+            $(".nav-item").removeClass("active");
+            $("#nav-forecasts").addClass("active");
+            
+            $(".edit-forecast-button").click(function() {
+                $(this).closest(".card-footer").find(".hidden-options-container").slideToggle();
+                $(this).closest(".card-footer").find(".coeff-value").prop("readonly",
+                    function(idx, oldProp) {
+                        return !oldProp;
+                    });
+            });
+
+            $(".edit-forecast-button").click();
+        });
+    </script>
+}

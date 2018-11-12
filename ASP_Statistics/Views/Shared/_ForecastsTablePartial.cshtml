@@ -1,0 +1,55 @@
+﻿@using ASP_Statistics.Classes
+@using ASP_Statistics.Enums
+@using ASP_Statistics.JsonModels
+@model IEnumerable<ASP_Statistics.JsonModels.ForecastJson>
+
+@{
+    var i = 1;
+}
+
+<div class="table-responsive mh-800">
+    <table class="table">
+        <thead class="thead-dark">
+        <tr class="table-info">
+            <th scope="col">#</th>
+            <th scope="col">Sport</th>
+            <th scope="col">Tournament</th>
+            <th scope="col">Teams</th>
+            <th scope="col">Date</th>
+            <th scope="col">Coefficient</th>
+            <th scope="col">Result</th>
+        </tr>
+        </thead>
+        <tbody>
+            @foreach (ForecastJson forecast in Model)
+            {
+                var className = "";
+                switch (forecast.GameResultType)
+                {
+                    case GameResultType.Expectation:
+                        className = "";
+                        break;
+                    case GameResultType.Win:
+                        className = "table-success";
+                        break;
+                    case GameResultType.Defeat:
+                        className = "table-danger";
+                        break;
+                    case GameResultType.RefundOrCancellation:
+                        className = "table-warning";
+                        break;
+                }
+
+                <tr class="@className">
+                    <th scope="row">@(i++)</th>
+                    <td>@forecast.Sport.ToString()</td>
+                    <td>@forecast.TournamentName</td>
+                    <td>@forecast.Game.ToString()</td>
+                    <td>@forecast.GameAt.ToString("g")</td>
+                    <td>@forecast.Coefficient</td>
+                    <td>@forecast.GameResultType.ToString()</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+</div>

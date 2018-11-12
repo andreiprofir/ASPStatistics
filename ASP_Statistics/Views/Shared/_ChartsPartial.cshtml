@@ -1,0 +1,254 @@
+﻿@using ASP_Statistics.Classes
+@using ASP_Statistics.Enums
+@using Newtonsoft.Json
+@model Dictionary<ASP_Statistics.Enums.ChartType, ChartViewModel>
+
+<div class="row">
+    <div class="col-12">
+        <div id="winLoseChart" style="width: 100%; height:400px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="winLose4ChartLine" style="width: 100%; height:400px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="winLose4ChartPursuit" style="width: 100%; height:400px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="winLoseCountsChart" style="width: 100%; height:400px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="winLoseCounts4Chart" style="width: 100%; height:400px;"></div>
+    </div>
+    <div class="col-12">
+        <div id="winLoseRefundCount" style="width: 100%; height:400px;"></div>
+    </div>
+</div>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("winLoseChart", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.WinLose].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.WinLose].Description" }
+            ],
+            axisX:{
+                labelAngle: 0
+            },
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    xValueFormatString: "DD MMM, YYYY",
+                    type: "column", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLose].ChartData))
+
+                }
+            ]
+        });
+        chart.render();
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("winLose4ChartLine", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.WinLose4Line].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.WinLose4Line].Description" }
+            ],
+            axisX:{
+                labelAngle: 0
+            },
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    xValueFormatString: "DD MMM, YYYY",
+                    type: "column", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLose4Line].ChartData))
+
+                }
+            ]
+        });
+        chart.render();
+    });
+</script>
+
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("winLose4ChartPursuit", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.WinLose4Pursuit].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.WinLose4Pursuit].Description" }
+            ],
+            axisX:{
+                labelAngle: 0
+            },
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    xValueFormatString: "DD MMM, YYYY",
+                    type: "column", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLose4Pursuit].ChartData))
+
+                }
+            ]
+        });
+        chart.render();
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("winLoseCountsChart", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.WinLoseCount].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.WinLoseCount].Description" }
+            ],
+            axisX:{
+                labelAngle: 0
+            },
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLoseCount].ChartData))
+                }
+            ]
+        });
+        chart.render();
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("winLoseCounts4Chart", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.WinLoseCount4].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.WinLoseCount4].Description" }
+            ],
+            axisX:{
+                labelAngle: 0
+            },
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLoseCount4].ChartData))
+                }
+            ]
+        });
+        chart.render();
+    });
+</script>
+
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("winLoseRefundCount", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.WinLoseRefundCount].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.WinLoseRefundCount].Description" }
+            ],
+            axisX: {
+                labelAngle: 0,
+                labelFontSize: 12,
+                labelFontColor: "black",
+                crosshair: {
+                    enabled: true
+                }
+            },
+            legend:{
+                cursor: "pointer",
+                itemclick: toggleDataSeries
+            },
+            exportEnabled: true,
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    name: "@GameResultType.Win",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLoseRefundCount].ChartData))
+                },
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    name: "@GameResultType.Defeat",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLoseRefundCount].SecondChartData))
+                },
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    name: "@GameResultType.RefundOrCancellation",
+                    showInLegend: "true",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLoseRefundCount].ThirdChartData))
+                }
+            ]
+        });
+        chart.render();
+
+        function toggleDataSeries(e) {
+            if(typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            }
+            else {
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+    });
+</script>
