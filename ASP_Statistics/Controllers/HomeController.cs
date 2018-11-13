@@ -54,9 +54,9 @@ namespace ASP_Statistics.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> SyncForecastResults(bool rewriteAllData = false)
+        public async Task<IActionResult> SyncResults(bool rewriteAllData = false)
         {
-            await _synchronizationService.SynchronizeForecastResultsAsync(rewriteAllData);
+            await _synchronizationService.SynchronizeResultsAsync(rewriteAllData);
 
             return Json("Ok");
         }

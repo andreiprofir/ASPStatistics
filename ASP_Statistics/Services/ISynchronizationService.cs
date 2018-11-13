@@ -4,7 +4,7 @@ namespace ASP_Statistics.Services
 {
     public interface ISynchronizationService
     {
-        Task SynchronizeForecastResultsAsync(bool rewriteAllExistingData = false);
+        Task SynchronizeResultsAsync(bool rewriteAllExistingData = false);
 
         Task SynchronizeForecastsAsync();
     }

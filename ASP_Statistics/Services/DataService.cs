@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -12,26 +13,40 @@ namespace ASP_Statistics.Services
 {
     public class DataService : IDataService
     {
-        private const string ForecastResultsFile = "forecast_results.json";
+        private static Lazy<Task<List<ForecastJson>>> _resultsLazy =
+            new Lazy<Task<List<ForecastJson>>>(() => GetForecastsFromFileAsync(ResultsFile));
+
+        private static Lazy<Task<List<ForecastJson>>> _forecastsLazy =
+            new Lazy<Task<List<ForecastJson>>>(() => GetForecastsFromFileAsync(ForecastsFile));
+
+        private static Lazy<Task<List<StateJson>>> _statesLazy =
+            new Lazy<Task<List<StateJson>>>(() => GetStatesAsync());
+
+        private const string ResultsFile = "forecast_results.json";
         private const string ForecastsFile = "forecasts.json";
         private const string StatesFile = "states.json";
 
-        private readonly IHostingEnvironment _hostingEnvironment;
+        public static string ContentRootPath { get; set; }
 
-        public DataService(IHostingEnvironment hostingEnvironment)
+        public async Task<List<ForecastJson>> GetResultsAsync()
         {
-            _hostingEnvironment = hostingEnvironment;
+            return await _resultsLazy.Value;
         }
 
-        public async Task<List<ForecastJson>> GetForecastResultsAsync()
+        public async Task<List<ForecastJson>> GetForecastsAsync()
         {
-            return await GetForecastsFromFileAsync(ForecastResultsFile);
+            return await _forecastsLazy.Value;
         }
 
-        public async Task SaveForecastResultsAsync(List<ForecastJson> forecasts,
+        public async Task<List<StateJson>> GetAlgorithmStatesAsync()
+        {
+            return await _statesLazy.Value;
+        }
+
+        public async Task SaveResultsAsync(List<ForecastJson> forecasts,
             SaveMethod saveMethod = SaveMethod.Prepend)
         {
-            await SaveForecastsIntoFile(ForecastResultsFile, forecasts, saveMethod);
+            await SaveForecastsIntoFile(ResultsFile, forecasts, saveMethod);
         }
 
         public async Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend)
@@ -48,7 +63,7 @@ namespace ASP_Statistics.Services
             await File.WriteAllTextAsync(GetFilePath(fileName), content);
         }
 
-        private async Task<List<ForecastJson>> PrepareForecastsForSaveAsync(string fileName,
+        private static async Task<List<ForecastJson>> PrepareForecastsForSaveAsync(string fileName,
             List<ForecastJson> forecasts, SaveMethod saveMethod)
         {
             List<ForecastJson> existingData;
@@ -72,12 +87,7 @@ namespace ASP_Statistics.Services
             return forecasts;
         }
 
-        public async Task<List<ForecastJson>> GetForecastsAsync()
-        {
-            return await GetForecastsFromFileAsync(ForecastsFile);
-        }
-
-        public async Task<List<StateJson>> GetAlgorithmStatesAsync()
+        private static async Task<List<StateJson>> GetStatesAsync()
         {
             string fileContent = await GetFileContentAsync(StatesFile);
 
@@ -91,7 +101,7 @@ namespace ASP_Statistics.Services
             return states;
         }
 
-        private async Task<List<ForecastJson>> GetForecastsFromFileAsync(string fileName)
+        private static async Task<List<ForecastJson>> GetForecastsFromFileAsync(string fileName)
         {
             string fileContent = await GetFileContentAsync(fileName);
 
@@ -104,7 +114,7 @@ namespace ASP_Statistics.Services
             return forecasts;
         }
 
-        private async Task<string> GetFileContentAsync(string fileName)
+        private static async Task<string> GetFileContentAsync(string fileName)
         {
             string filePath = GetFilePath(fileName);
 
@@ -114,9 +124,9 @@ namespace ASP_Statistics.Services
             return await File.ReadAllTextAsync(filePath);
         }
 
-        private string GetFilePath(string fileName)
+        private static string GetFilePath(string fileName)
         {
-            return Path.Combine(_hostingEnvironment.ContentRootPath, "files", fileName);
+            return Path.Combine(ContentRootPath, "files", fileName);
         }
     }
 }

@@ -7,9 +7,9 @@ namespace ASP_Statistics.Services
 {
     public interface IDataService
     {
-        Task<List<ForecastJson>> GetForecastResultsAsync();
+        Task<List<ForecastJson>> GetResultsAsync();
 
-        Task SaveForecastResultsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend);
+        Task SaveResultsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend);
 
         Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend);
 

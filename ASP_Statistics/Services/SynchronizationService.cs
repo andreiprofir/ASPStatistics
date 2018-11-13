@@ -17,7 +17,7 @@ namespace ASP_Statistics.Services
             _dataService = dataService;
         }
 
-        public async Task SynchronizeForecastResultsAsync(bool rewriteAllExistingData = false)
+        public async Task SynchronizeResultsAsync(bool rewriteAllExistingData = false)
         {
             int? numberOfPages = 1;
             var saveMethod = SaveMethod.Prepend;
@@ -30,7 +30,7 @@ namespace ASP_Statistics.Services
 
             List<ForecastJson> forecasts = await _gamblingSupportService.GetStatisticsAsync(numberOfPages);
 
-            await _dataService.SaveForecastResultsAsync(forecasts, saveMethod);
+            await _dataService.SaveResultsAsync(forecasts, saveMethod);
         }
 
         public async Task SynchronizeForecastsAsync()

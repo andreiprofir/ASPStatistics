@@ -74,7 +74,7 @@
                             </div>
                         </div>
                         <div class="col d-flex justify-content-end">
-                            <button id="syncForecastResultsButton" type="button" class="btn btn-warning text-white bold">Sync Forecast Results</button>
+                            <button id="syncResultsButton" type="button" class="btn btn-warning text-white bold">Sync Forecast Results</button>
                         </div>
                     </div>
                     <div class="form-row mb-2">
@@ -136,14 +136,14 @@
     $(function() {
         toggleLoader();
 
-        $("#syncForecastResultsButton").click(function() {
+        $("#syncResultsButton").click(function() {
             toggleLoader();
 
             var data = {
                 rewriteAllData: $("#syncAllData").is(":checked")
             };
 
-            $.post('@Url.Action("SyncForecastResults", "Home")', data,
+            $.post('@Url.Action("SyncResults", "Home")', data,
                 function() {
                     toggleLoader();
                 });

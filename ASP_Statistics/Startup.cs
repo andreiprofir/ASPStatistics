@@ -49,8 +49,14 @@ namespace ASP_Statistics
             services.AddScoped<IDataOldService, DataOldService>();
             services.AddScoped<IGamblingSupportService, GamblingSupportService>();
             services.AddScoped<ISynchronizationService, SynchronizationService>();
-            services.AddScoped<IDataService, DataService>();
+            //services.AddScoped<IDataService, DataService>();
             services.AddScoped<IAlgorithmService, AlgorithmService>();
+
+            services.AddSingleton<IDataService, DataService>(provider =>
+            {
+                DataService.ContentRootPath = provider.GetService<IHostingEnvironment>().ContentRootPath;
+                return new DataService();
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
