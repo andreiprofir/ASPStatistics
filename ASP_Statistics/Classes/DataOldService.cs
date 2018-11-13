@@ -952,7 +952,7 @@ namespace ASP_Statistics.Classes
                     tempBank -= oneBetValues[j];
                 }
 
-                //firstBetValue = CalculateNextBetValue(tempBank, firstBetValue);
+                firstBetValue = CalculateNextBetValue(tempBank, firstBetValue);
 
                 //if (CalculateMaxBankValue(firstBetValue + 0.1M) < tempBank)
                 //    firstBetValue += 0.1M;

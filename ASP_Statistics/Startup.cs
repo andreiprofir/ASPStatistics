@@ -50,6 +50,7 @@ namespace ASP_Statistics
             services.AddScoped<IGamblingSupportService, GamblingSupportService>();
             services.AddScoped<ISynchronizationService, SynchronizationService>();
             services.AddScoped<IDataService, DataService>();
+            services.AddScoped<IAlgorithmService, AlgorithmService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
