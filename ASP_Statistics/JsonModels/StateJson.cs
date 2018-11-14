@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Newtonsoft.Json;
 
@@ -8,10 +9,7 @@ namespace ASP_Statistics.JsonModels
     {
         [JsonProperty("id")]
         public long Id { get; set; }
-
-        [JsonProperty("forecast_id")]
-        public long ForecastId { get; set; }
-
+        
         [JsonProperty("bank")]
         public decimal Bank { get; set; } 
 

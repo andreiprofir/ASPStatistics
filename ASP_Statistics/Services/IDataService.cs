@@ -1,26 +1,32 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Threading.Tasks;
 using ASP_Statistics.Enums;
 using ASP_Statistics.JsonModels;
+using ASP_Statistics.Models;
 
 namespace ASP_Statistics.Services
 {
     public interface IDataService
     {
-        List<ForecastJson> GetResults();
+        List<ForecastJson> GetResults(FilterParameters filterParameters = null, bool reverse = true);
 
-        List<ForecastJson> GetForecasts();
+        List<ForecastJson> GetForecasts(bool reverse = true);
 
         List<StateJson> GetStates();
 
-        StateJson GetStateByForecastId(long forecastId);
-
         StateJson GetLastState();
+
+        SettingsJson GetSettings();
+
+        ForecastJson GetForecastBy(long forecastId);
 
         ForecastJson GetLastCalculatedForecastByIndex(int index);
 
         Task SaveResultsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend);
 
         Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend);
+
+        Task SaveSettingsAsync(SettingsJson settings);
     }
 }

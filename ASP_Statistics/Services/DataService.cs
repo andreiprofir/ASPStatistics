@@ -1,9 +1,11 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
 using ASP_Statistics.Enums;
 using ASP_Statistics.JsonModels;
+using ASP_Statistics.Models;
 using ASP_Statistics.Utils;
 using Newtonsoft.Json;
 
@@ -12,25 +14,55 @@ namespace ASP_Statistics.Services
     public class DataService : IDataService
     {
         private static List<ForecastJson> _results = GetForecastsFromFileAsync(ResultsFile).Result;
-
         private static List<ForecastJson> _forecasts = GetForecastsFromFileAsync(ForecastsFile).Result;
-
         private static List<StateJson> _states = GetStatesAsync().Result;
+        private static SettingsJson _settings = GetSettingsAsync().Result;
 
         private const string ResultsFile = "forecast_results.json";
         private const string ForecastsFile = "forecasts.json";
         private const string StatesFile = "states.json";
+        private const string SettingsFile = "settings.json";
 
         public static string ContentRootPath { get; set; }
 
-        public List<ForecastJson> GetResults()
+        public List<ForecastJson> GetResults(FilterParameters filterParameters = null, bool reverse = true)
         {
-            return _results;
+            IEnumerable<ForecastJson> query = _results.AsEnumerable();
+
+            if (reverse)
+                query = query.Reverse();
+
+            if (filterParameters == null)
+                return query.ToList();
+
+            if (filterParameters.LowerBound != null)
+                query = query.Where(x => x.GameAt >= filterParameters.LowerBound);
+            else
+                query = query.Where(x => x.GameAt.Year >= 2018 && x.GameAt.Month >= 4);
+
+            if (filterParameters.UpperBound != null)
+                query = query.Where(x => x.GameAt <= filterParameters.UpperBound);
+            
+            if (filterParameters.ForecastType != null)
+                query = query.Where(x => x.ForecastType == filterParameters.ForecastType);
+
+            if (filterParameters.GameResultType != null)
+                query = query.Where(x => x.GameResultType == filterParameters.GameResultType);
+
+            if (filterParameters.Month != null)
+                query = query.Where(x => x.GameAt.Month == (int) filterParameters.Month);
+
+            if (filterParameters.Year != null)
+                query = query.Where(x => x.GameAt.Year == filterParameters.Year);
+
+            return query.ToList();
         }
 
-        public List<ForecastJson> GetForecasts()
+        public List<ForecastJson> GetForecasts(bool reverse = true)
         {
-            return _forecasts;
+            return reverse 
+                ? _forecasts.AsEnumerable().Reverse().ToList() 
+                : _forecasts;
         }
 
         public List<StateJson> GetStates()
@@ -38,14 +70,19 @@ namespace ASP_Statistics.Services
             return _states;
         }
 
-        public StateJson GetStateByForecastId(long forecastId)
-        {
-            return _states.FirstOrDefault(x => x.ForecastId == forecastId);
-        }
-
         public StateJson GetLastState()
         {
-            return _states.FirstOrDefault();
+            return _states.LastOrDefault();
+        }
+
+        public SettingsJson GetSettings()
+        {
+            return _settings;
+        }
+
+        public ForecastJson GetForecastBy(long forecastId)
+        {
+            return _forecasts.FirstOrDefault(x => x.Id == forecastId);
         }
 
         public ForecastJson GetLastCalculatedForecastByIndex(int index)
@@ -53,18 +90,31 @@ namespace ASP_Statistics.Services
             return _forecasts
                 .GroupBy(x => x.ThreadNumber)
                 .ElementAtOrDefault(index)
-                ?.FirstOrDefault(x => x.GameResultType != GameResultType.Expectation);
+                ?.LastOrDefault(x => x.GameResultType != GameResultType.Expectation);
         }
 
         public async Task SaveResultsAsync(List<ForecastJson> forecasts,
-            SaveMethod saveMethod = SaveMethod.Prepend)
+            SaveMethod saveMethod = SaveMethod.Append)
         {
             await SaveForecastsIntoFileAsync(ResultsFile, forecasts, saveMethod);
         }
 
-        public async Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend)
+        public async Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Append)
         {
             await SaveForecastsIntoFileAsync(ForecastsFile, forecasts, saveMethod);
+        }
+
+        public async Task SaveSettingsAsync(SettingsJson settings)
+        {
+            _settings = new SettingsJson
+            {
+                InitialBank = settings.InitialBank,
+                InitialBetValue = settings.InitialBetValue
+            };
+
+            string content = JsonConvert.SerializeObject(settings);
+
+            await File.WriteAllTextAsync(GetFilePath(SettingsFile), content);
         }
 
         private static async Task SaveForecastsIntoFileAsync(string fileName, List<ForecastJson> forecasts,
@@ -117,7 +167,7 @@ namespace ASP_Statistics.Services
                 return new List<StateJson>();
 
             List<StateJson> states = JsonConvert.DeserializeObject<List<StateJson>>(fileContent)
-                .OrderByDescending(x => x.Id)
+                .OrderBy(x => x.Id)
                 .ToList();
 
             return states;
@@ -136,6 +186,16 @@ namespace ASP_Statistics.Services
                 .ToList();
 
             return forecasts;
+        }
+
+        private static async Task<SettingsJson> GetSettingsAsync()
+        {
+            string fileContent = await GetFileContentAsync(SettingsFile);
+
+            if (string.IsNullOrEmpty(fileContent))
+                return new SettingsJson();
+
+            return JsonConvert.DeserializeObject<SettingsJson>(fileContent);
         }
 
         private static async Task<string> GetFileContentAsync(string fileName)

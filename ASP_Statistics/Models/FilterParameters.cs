@@ -3,7 +3,7 @@ using ASP_Statistics.Enums;
 
 namespace ASP_Statistics.Models
 {
-    public class RequestViewModel
+    public class FilterParameters
     {
         public GameResultType? GameResultType { get; set; }
 

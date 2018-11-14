@@ -7,6 +7,6 @@ namespace ASP_Statistics.Services
 {
     public interface IAlgorithmService
     {
-        Task<StateJson> CalculateNextStateAsync(CurrentForecast currentForecast, PreviousForecast previousForecast);
+        StateJson CalculateNextState(long forecastId);
     }
 }

@@ -28,14 +28,17 @@ namespace ASP_Statistics.Services
                 saveMethod = SaveMethod.Rewrite;
             }
 
-            List<ForecastJson> forecasts = await _gamblingSupportService.GetStatisticsAsync(numberOfPages);
+            List<ForecastJson> forecasts = (await _gamblingSupportService.GetStatisticsAsync(numberOfPages))
+                .AsEnumerable()
+                .Reverse()
+                .ToList();
 
             await _dataService.SaveResultsAsync(forecasts, saveMethod);
         }
 
         public async Task SynchronizeForecastsAsync()
         {
-            List<ForecastJson> existingData = await _dataService.GetForecasts();
+            List<ForecastJson> existingData = _dataService.GetForecasts();
             List<ForecastJson> forecasts = await _gamblingSupportService.GetForecastsAsync(1);
 
             SetThreadNumbers(forecasts);
@@ -53,6 +56,8 @@ namespace ASP_Statistics.Services
                     forecast.ThreadNumber = existsForecast.ThreadNumber;
                 }
             }
+
+            forecasts = forecasts.AsEnumerable().Reverse().ToList();
 
             await _dataService.SaveForecastsAsync(forecasts);
         }
