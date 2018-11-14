@@ -7,14 +7,20 @@ namespace ASP_Statistics.Services
 {
     public interface IDataService
     {
-        Task<List<ForecastJson>> GetResultsAsync();
+        List<ForecastJson> GetResults();
+
+        List<ForecastJson> GetForecasts();
+
+        List<StateJson> GetStates();
+
+        StateJson GetStateByForecastId(long forecastId);
+
+        StateJson GetLastState();
+
+        ForecastJson GetLastCalculatedForecastByIndex(int index);
 
         Task SaveResultsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend);
 
         Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend);
-
-        Task<List<ForecastJson>> GetForecastsAsync();
-
-        Task<List<StateJson>> GetAlgorithmStatesAsync();
     }
 }

@@ -43,6 +43,6 @@ namespace ASP_Statistics.JsonModels
         public decimal BetValue { get; set; }
 
         [JsonProperty("number_of_thread")]
-        public int? ThreadNumber { get; set; }
+        public int ThreadNumber { get; set; }
     }
 }

@@ -34,7 +34,7 @@ namespace ASP_Statistics.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<ForecastJson> forecasts = await _dataService.GetForecastsAsync();
+            List<ForecastJson> forecasts = await _dataService.GetForecasts();
 
             List<ForecastViewModel> model = _mapper.Map<List<ForecastJson>, List<ForecastViewModel>>(forecasts);
             

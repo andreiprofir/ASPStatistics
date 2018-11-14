@@ -6,6 +6,6 @@
 
         public double Coefficient { get; set; }
 
-        public int? ThreadNumber { get; set; }
+        public int ThreadNumber { get; set; }
     }
 }

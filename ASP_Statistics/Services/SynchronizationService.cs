@@ -35,7 +35,7 @@ namespace ASP_Statistics.Services
 
         public async Task SynchronizeForecastsAsync()
         {
-            List<ForecastJson> existingData = await _dataService.GetForecastsAsync();
+            List<ForecastJson> existingData = await _dataService.GetForecasts();
             List<ForecastJson> forecasts = await _gamblingSupportService.GetForecastsAsync(1);
 
             SetThreadNumbers(forecasts);

@@ -33,76 +33,76 @@ namespace ASP_Statistics.Services
 
             };
 
-            
-                //decimal tempBank = bank;
 
-                //for (int j = 0; j < index; j++)
-                //{
-                //    tempBank -= oneBetValues[j];
-                //}
+            //decimal tempBank = bank;
 
-                //firstBetValue = CalculateNextBetValue(tempBank, firstBetValue);
+            //for (int j = 0; j < index; j++)
+            //{
+            //    tempBank -= oneBetValues[j];
+            //}
 
-                //if (CalculateMaxBankValue(firstBetValue + 0.1M) < tempBank)
-                //    firstBetValue += 0.1M;
+            //firstBetValue = CalculateNextBetValue(tempBank, firstBetValue);
 
-                
-                    
+            //if (CalculateMaxBankValue(firstBetValue + 0.1M) < tempBank)
+            //    firstBetValue += 0.1M;
 
-                    
-                    decimal result = CalculateResult(oneBetValues[j], forecast.GameResultType, forecast.Coefficient);
 
-                    //bank -= oneBetValues[j];
-                    //currentBank -= oneBetValues[j];
 
-                    if (result < 0)
-                    {
-                        loseValues[j] += oneBetValues[j];
-                        numOfLoses[j] += 1;
-                        numOfDoubleLoses[j] += 1;
 
-                        oneBetValues[j] = (firstBetValue + loseValues[j]) / (decimal) (forecast.Coefficient - 1);
-                    }
-                    else if (result > oneBetValues[j])
-                    {
-                        profit += (result - oneBetValues[j]);
-                        numOfLoses[j] -= 1;
 
-                        currentBank += oneBetValues[j];
-                        
+            decimal result = CalculateResult(oneBetValues[j], forecast.GameResultType, forecast.Coefficient);
 
-                        if (loseValues[j] <= result)
-                        {
-                            loseValues[j] = 0;
-                            numOfLoses[j] = 0;
-                            numOfDoubleLoses[j] = 0;
-                            oneBetValues[j] = firstBetValue;
-                        }
-                        else
-                        {
-                            loseValues[j] -= result;
+            //bank -= oneBetValues[j];
+            //currentBank -= oneBetValues[j];
 
-                            oneBetValues[j] = (firstBetValue + loseValues[j]) / (decimal) (forecast.Coefficient - 1);
-                        }
+            if (result < 0)
+            {
+                loseValues[j] += oneBetValues[j];
+                numOfLoses[j] += 1;
+                numOfDoubleLoses[j] += 1;
 
-                        bank += result;
-                    }
-                    else
-                    {
-                        bank += oneBetValues[j];
-                        currentBank += oneBetValues[j];
-                    }
-                
-            
+                oneBetValues[j] = (firstBetValue + loseValues[j]) / (decimal)(forecast.Coefficient - 1);
+            }
+            else if (result > oneBetValues[j])
+            {
+                profit += (result - oneBetValues[j]);
+                numOfLoses[j] -= 1;
+
+                currentBank += oneBetValues[j];
+
+
+                if (loseValues[j] <= result)
+                {
+                    loseValues[j] = 0;
+                    numOfLoses[j] = 0;
+                    numOfDoubleLoses[j] = 0;
+                    oneBetValues[j] = firstBetValue;
+                }
+                else
+                {
+                    loseValues[j] -= result;
+
+                    oneBetValues[j] = (firstBetValue + loseValues[j]) / (decimal)(forecast.Coefficient - 1);
+                }
+
+                bank += result;
+            }
+            else
+            {
+                bank += oneBetValues[j];
+                currentBank += oneBetValues[j];
+            }
+
+
 
             return state;
         }
 
-        private async Task<StateJson> GetPreviousStateAsync(long forecastId)
+        private StateJson GetPreviousStateAsync(int currentForecastThreadNumber)
         {
-            List<StateJson> states = await _dataService.GetAlgorithmStatesAsync();
-
-            return states.FirstOrDefault(x => x.ForecastId == forecastId);
+            ForecastJson previousForecast = _dataService.GetLastCalculatedForecastByIndex(currentForecastThreadNumber);
+        
+            return _dataService.GetStateByForecastId(previousForecast.Id);
         }
     }
 }
