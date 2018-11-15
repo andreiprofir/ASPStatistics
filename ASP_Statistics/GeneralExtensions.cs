@@ -17,5 +17,18 @@ namespace ASP_Statistics
                 LoseValues = state.LoseValues.ToList()
             };
         }
+
+        public static SettingsJson Copy(this SettingsJson settings)
+        {
+            return new SettingsJson
+            {
+                ThreadNumbers = settings.ThreadNumbers,
+                InitialBetValue = settings.InitialBetValue,
+                InitialBank = settings.InitialBank,
+                BetValueIncreaseStep = settings.BetValueIncreaseStep,
+                BetValueRoundDecimals = settings.BetValueRoundDecimals,
+                CoefficientBankReserve = settings.CoefficientBankReserve
+            };
+        }
     }
 }

@@ -13,17 +13,30 @@ namespace ASP_Statistics.Services
 {
     public class DataService : IDataService
     {
-        private static List<ForecastJson> _results = GetForecastsFromFileAsync(ResultsFile).Result;
-        private static List<ForecastJson> _forecasts = GetForecastsFromFileAsync(ForecastsFile).Result;
-        private static List<StateJson> _states = GetStatesAsync().Result;
-        private static SettingsJson _settings = GetSettingsAsync().Result;
+        private static string _contentRootPath;
+        
+        private static List<ForecastJson> _results;
+        private static List<ForecastJson> _forecasts;
+        private static List<StateJson> _states;
+        private static SettingsJson _settings;
+
+        public static string ContentRootPath
+        {
+            get => _contentRootPath;
+            set
+            {
+                _contentRootPath = value;
+                _results = GetForecastsFromFileAsync(ResultsFile).Result;
+                _forecasts = GetForecastsFromFileAsync(ForecastsFile).Result;
+                _states = GetStatesAsync().Result;
+                _settings = GetSettingsAsync().Result;
+            }
+        }
 
         private const string ResultsFile = "forecast_results.json";
         private const string ForecastsFile = "forecasts.json";
         private const string StatesFile = "states.json";
         private const string SettingsFile = "settings.json";
-
-        public static string ContentRootPath { get; set; }
 
         public List<ForecastJson> GetResults(FilterParameters filterParameters = null, bool reverse = true)
         {
@@ -43,17 +56,10 @@ namespace ASP_Statistics.Services
             if (filterParameters.UpperBound != null)
                 query = query.Where(x => x.GameAt <= filterParameters.UpperBound);
             
-            if (filterParameters.ForecastType != null)
-                query = query.Where(x => x.ForecastType == filterParameters.ForecastType);
+            query = query.Where(x => x.ForecastType == filterParameters.ForecastType);
 
             if (filterParameters.GameResultType != null)
                 query = query.Where(x => x.GameResultType == filterParameters.GameResultType);
-
-            if (filterParameters.Month != Month.All)
-                query = query.Where(x => x.GameAt.Month == (int) filterParameters.Month);
-
-            if (filterParameters.Year != null)
-                query = query.Where(x => x.GameAt.Year == filterParameters.Year);
 
             return query.ToList();
         }
@@ -77,7 +83,7 @@ namespace ASP_Statistics.Services
 
         public SettingsJson GetSettings()
         {
-            return _settings;
+            return _settings.Copy();
         }
 
         public ForecastJson GetForecastBy(long forecastId)
@@ -106,11 +112,7 @@ namespace ASP_Statistics.Services
 
         public async Task SaveSettingsAsync(SettingsJson settings)
         {
-            _settings = new SettingsJson
-            {
-                InitialBank = settings.InitialBank,
-                InitialBetValue = settings.InitialBetValue
-            };
+            _settings = settings.Copy();
 
             string content = JsonConvert.SerializeObject(settings);
 
@@ -146,13 +148,13 @@ namespace ASP_Statistics.Services
         {
             foreach (var group in forecasts.GroupBy(x => new {x.ShowAt.Year, x.ShowAt.Month, x.ShowAt.Day}))
             {
-                int index = 0;
+                var index = 0;
 
                 foreach (ForecastJson forecast in group)
                 {
                     index += 1;
 
-                    if (index > 3)
+                    if (index > _settings.ThreadNumbers - 1)
                         index = 0;
 
                     forecast.ThreadNumber = index;

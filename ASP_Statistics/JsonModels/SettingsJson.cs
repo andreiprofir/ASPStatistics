@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using System;
+using Newtonsoft.Json;
 
 namespace ASP_Statistics.JsonModels
 {
@@ -18,5 +19,14 @@ namespace ASP_Statistics.JsonModels
 
         [JsonProperty("coefficient_bank_reserve")]
         public double CoefficientBankReserve { get; set; }
+
+        [JsonProperty("thread_numbers")]
+        public int ThreadNumbers { get; set; } = 4;
+
+        [JsonProperty("default_lower_bound")]
+        public DateTimeOffset? LowerBound { get; set; } = new DateTime(2018, 4, 1);
+
+        [JsonProperty("default_upper_bound")]
+        public DateTimeOffset? UpperBound { get; set; }
     }
 }

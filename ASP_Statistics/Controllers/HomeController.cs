@@ -20,24 +20,37 @@ namespace ASP_Statistics.Controllers
         private readonly ISynchronizationService _synchronizationService;
         private readonly IMapper _mapper;
         private readonly IDataService _dataService;
+        private readonly IAlgorithmService _algorithmService;
 
         public HomeController(IDataOldService dataOldService,  
             ISynchronizationService synchronizationService, 
             IMapper mapper, 
-            IDataService dataService)
+            IDataService dataService,
+            IAlgorithmService algorithmService)
         {
             _dataOldService = dataOldService;
             _synchronizationService = synchronizationService;
             _mapper = mapper;
             _dataService = dataService;
+            _algorithmService = algorithmService;
         }
 
         public async Task<IActionResult> Index()
         {
-            List<ForecastJson> forecasts = await _dataService.GetForecasts();
+            List<ForecastJson> forecasts = _dataService.GetForecasts();
 
             List<ForecastViewModel> model = _mapper.Map<List<ForecastJson>, List<ForecastViewModel>>(forecasts);
             
+            decimal bet = _dataOldService.CalculateNextBetValue(325);
+            decimal bet2 = await _algorithmService.CalculateBetValueByBankAsync(new SettingsJson
+            {
+                LowerBound = new DateTime(2018, 5, 1),
+                UpperBound = new DateTime(2018, 11, 1),
+                BetValueIncreaseStep = 0.1M,
+                InitialBank = 325
+            });
+            decimal calculatedBank = _dataOldService.CalculateMaxBankValue(4);
+
             return View(model);
         }
 

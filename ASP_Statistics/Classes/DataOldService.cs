@@ -6,6 +6,7 @@ using System.Security.Cryptography.X509Certificates;
 using ASP_Statistics.Enums;
 using ASP_Statistics.JsonModels;
 using ASP_Statistics.Models;
+using ASP_Statistics.Services;
 using ASP_Statistics.Utils;
 using Microsoft.AspNetCore.Hosting;
 using Newtonsoft.Json;
@@ -15,6 +16,7 @@ namespace ASP_Statistics.Classes
     public class DataOldService : IDataOldService
     {
         private readonly IHostingEnvironment _hostingEnvironment;
+        private readonly IDataService _dataService;
         private static List<ForecastJson> _forecasts;
         private readonly string _forecastsFile = "forecasts.json";
 
@@ -22,6 +24,37 @@ namespace ASP_Statistics.Classes
         {
             get => _forecasts;
             set => _forecasts = value;
+        }
+
+        public DataOldService(IHostingEnvironment hostingEnvironment, IDataService dataService)
+        {
+            _hostingEnvironment = hostingEnvironment;
+            _dataService = dataService;
+
+            if (_forecasts == null)
+                _forecasts = GetForecasts();
+        }
+
+        public List<ForecastJson> Filter(RequestViewModel model)
+        {
+            if (model == null)
+                return _forecasts;
+
+            IEnumerable<ForecastJson> query = _forecasts;
+
+            if (model.ForecastType != null)
+                query = query.Where(x => x.ForecastType == model.ForecastType);
+
+            if (model.GameResultType != null)
+                query = query.Where(x => x.GameResultType == model.GameResultType);
+
+            if (model.Month != null)
+                query = query.Where(x => x.GameAt.Month == (int) model.Month);
+
+            if (model.Year != null)
+                query = query.Where(x => x.GameAt.Year == model.Year);
+
+            return new List<ForecastJson>(query.OrderByDescending(x => x.GameAt));
         }
 
         public Dictionary<ChartType, ChartViewModel> GetChartData(List<ForecastJson> filteredForecasts,
@@ -430,6 +463,51 @@ namespace ASP_Statistics.Classes
             return model;
         }
 
+        public decimal CalculateNextBetValue(decimal bank, decimal initialBet = 0M, decimal step = 0.1M,
+            DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null)
+        {
+            decimal bet = initialBet;
+
+            while (CheckIfAllowChangeBetValue(bet, bank, 4, step, lowerBound, upperBound))
+                bet += step;
+
+            return bet;
+        }
+
+        public decimal CalculateMaxBankValue(decimal bet, DateTimeOffset? lowerBound = null,
+            DateTimeOffset? upperBound = null)
+        {
+            List<ForecastJson> forecasts = GetForecastsForCalculations(lowerBound, upperBound);
+
+            decimal maxBank = CalculateBankValue(forecasts, bet);
+
+            foreach (var f in forecasts.GroupBy(x => x.GameAt.Month))
+            {
+                decimal bank = CalculateBankValue(f.ToList(), bet);
+
+                if (bank > maxBank)
+                    maxBank = bank;
+            }
+
+            return Math.Ceiling(maxBank);
+        }
+
+        private List<ForecastJson> GetForecastsForCalculations(DateTimeOffset? lowerBound, DateTimeOffset? upperBound)
+        {
+            var query = _forecasts.AsEnumerable()
+                .Reverse();
+
+            if (lowerBound != null)
+                query = query.Where(x => x.GameAt >= lowerBound);
+            else
+                query = query.Where(x => x.GameAt.Year >= 2018 && x.GameAt.Month >= 4);
+
+            if (upperBound != null)
+                query = query.Where(x => x.GameAt <= upperBound);
+
+            return query.ToList();
+        }
+
         public decimal CalculateMaxBankValuePursuit(decimal bet)
         {
             List<ForecastJson> forecasts = _forecasts.AsEnumerable()
@@ -456,7 +534,72 @@ namespace ASP_Statistics.Classes
             return Math.Ceiling(maxBank);
         }
 
-        
+        private decimal CalculateBankValue(List<ForecastJson> forecasts, decimal bet)
+        {
+            var loseValues = new List<decimal>();
+            var numOfLoses = new List<int>();
+            var oneBetValues = new List<decimal>();
+
+            int index = 4;
+
+            for (int i = 0; i < index; i++)
+            {
+                loseValues.Add(0);
+                numOfLoses.Add(0);
+                oneBetValues.Add(bet);
+            }
+
+            decimal bank = 0;
+            decimal maxBank = 0;
+
+            for (var i = 0; i < forecasts.Count - index; i += index)
+            {
+                if (maxBank < oneBetValues.Sum() + loseValues.Sum())
+                    maxBank = oneBetValues.Sum() + loseValues.Sum();
+
+                for (int j = 0; j < index; j++)
+                {
+                    ForecastJson forecast = forecasts[i + j];
+
+                    bank -= oneBetValues[j];
+
+                    decimal result = CalculateResult(oneBetValues[j], forecast.GameResultType, forecast.Coefficient);
+
+                    if (result < 0)
+                    {
+                        loseValues[j] += oneBetValues[j];
+                        numOfLoses[j] += 1;
+
+                        oneBetValues[j] = (bet + loseValues[j]) / (decimal) (forecast.Coefficient - 1);
+                    }
+                    else if (result > oneBetValues[j])
+                    {
+                        numOfLoses[j] -= 1;
+
+                        if (loseValues[j] <= result)
+                        {
+                            loseValues[j] = 0;
+                            numOfLoses[j] = 0;
+                            oneBetValues[j] = bet;
+                        }
+                        else
+                        {
+                            loseValues[j] -= result;
+
+                            oneBetValues[j] = (bet + loseValues[j]) / (decimal) (forecast.Coefficient - 1);
+                        }
+
+                        bank += result;
+                    }
+                    else
+                    {
+                        bank += oneBetValues[j];
+                    }
+                }
+            }
+
+            return Math.Abs(maxBank);
+        }
 
         class MyClass
         {
@@ -920,9 +1063,77 @@ namespace ASP_Statistics.Classes
             return model;
         }
 
-        
+        private bool CheckIfAllowChangeBetValue(decimal bet, decimal bank, int index, decimal step = 0.1M,
+            DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null)
+        {
+            List<ForecastJson> forecasts = _dataService.GetResults(new FilterParameters
+            {
+                LowerBound = new DateTime(2018, 5, 1),
+                UpperBound = new DateTime(2018, 11, 1)
+            });
 
-        
+            foreach (var f in forecasts.GroupBy(z => z.GameAt.Month))
+            {
+                decimal calculatedMaxBank = IsValidNewBetValue(f.ToList(), bet + step, bank, index);
+
+                if (calculatedMaxBank > bank) return false;
+            }
+
+            return IsValidNewBetValue(forecasts, bet + step, bank, index) < bank;
+        }
+
+        private decimal IsValidNewBetValue(List<ForecastJson> forecasts, decimal bet, decimal bank, int index)
+        {
+            var loseValues = new List<decimal>();
+            var oneBetValues = new List<decimal>();
+            decimal maxBankValues = 0;
+
+            for (int i = 0; i < index; i++)
+            {
+                loseValues.Add(0);
+                oneBetValues.Add(bet);
+            }
+
+            for (var i = 0; i < forecasts.Count - index; i += index)
+            {
+                if (maxBankValues < oneBetValues.Sum() + loseValues.Sum())
+                    maxBankValues = oneBetValues.Sum() + loseValues.Sum();
+
+                for (int j = 0; j < index; j++)
+                {
+                    ForecastJson forecast = forecasts[i + j];
+
+                    bank -= oneBetValues[j];
+
+                    if (forecast.GameResultType == GameResultType.Expectation ||
+                        forecast.GameResultType == GameResultType.RefundOrCancellation)
+                    {
+                        bank += oneBetValues[j];
+                    }
+                    else
+                    {
+                        decimal result = CalculateResult(oneBetValues[j], forecast.GameResultType,
+                            forecast.Coefficient);
+
+                        if (result < 0)
+                        {
+                            loseValues[j] += oneBetValues[j];
+
+                            oneBetValues[j] = (bet + loseValues[j]) / (decimal) (forecast.Coefficient - 1);
+                        }
+                        else
+                        {
+                            oneBetValues[j] = bet;
+                            loseValues[j] = 0;
+
+                            bank += result;
+                        }
+                    }
+                }
+            }
+
+            return maxBankValues;
+        }
 
         private ChartViewModel GetFlatStrategyBankChart(List<ForecastJson> filteredForecasts, decimal firstBetValue,
             decimal initialBank, out List<ChartData> bets, out List<ChartData> profits,

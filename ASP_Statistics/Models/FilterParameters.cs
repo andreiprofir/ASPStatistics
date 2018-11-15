@@ -7,11 +7,7 @@ namespace ASP_Statistics.Models
     {
         public GameResultType? GameResultType { get; set; }
 
-        public ForecastType? ForecastType { get; set; }
-
-        public Month Month { get; set; } = Month.All;
-
-        public int? Year { get; set; }
+        public ForecastType ForecastType { get; set; } = ForecastType.Paid;
 
         public DateTimeOffset? LowerBound { get; set; }
 
