@@ -53,24 +53,6 @@ namespace ASP_Statistics.Services
             return settings.InitialBetValue - settings.BetValueIncreaseStep;
         }
 
-        private decimal CalculateResult(decimal betValue, GameResultType forecastGameResultType,
-            double forecastCoefficient)
-        {
-            switch (forecastGameResultType)
-            {
-                case GameResultType.Expectation:
-                    return betValue;
-                case GameResultType.Win:
-                    return betValue * (decimal) forecastCoefficient;
-                case GameResultType.Defeat:
-                    return betValue * -1;
-                case GameResultType.RefundOrCancellation:
-                    return betValue;
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(forecastGameResultType), forecastGameResultType, null);
-            }
-        }
-
         private StateJson CalculateNextAlgorithmState(ForecastJson currentForecast, 
             ForecastJson previousForecast, StateJson lastState = null, int roundDecimals = 2, bool allowIncreaseBet = false)
         {
@@ -85,8 +67,14 @@ namespace ASP_Statistics.Services
             int index = currentForecast.ThreadNumber;
 
             if (allowIncreaseBet)
-                state.Bets[currentForecast.ThreadNumber] = CalculateBetValue(null);
-            
+            {
+                SettingsJson settings = _dataService.GetSettings();
+                settings.InitialBetValue = state.InitialBet;
+
+                state.InitialBet = CalculateBetValue(settings);
+                settings.InitialBetValue = state.InitialBet;
+            }
+
             decimal result = 
                 CalculateResult(state.Bets[index], previousForecast.GameResultType, previousForecast.Coefficient);
             
@@ -172,6 +160,24 @@ namespace ASP_Statistics.Services
             }
 
             return maxBank;
+        }
+
+        private decimal CalculateResult(decimal betValue, GameResultType forecastGameResultType,
+            double forecastCoefficient)
+        {
+            switch (forecastGameResultType)
+            {
+                case GameResultType.Expectation:
+                    return betValue;
+                case GameResultType.Win:
+                    return betValue * (decimal) forecastCoefficient;
+                case GameResultType.Defeat:
+                    return betValue * -1;
+                case GameResultType.RefundOrCancellation:
+                    return betValue;
+                default:
+                    throw new ArgumentOutOfRangeException(nameof(forecastGameResultType), forecastGameResultType, null);
+            }
         }
     }
 }

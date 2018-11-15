@@ -20,6 +20,9 @@ namespace ASP_Statistics
 
         public static SettingsJson Copy(this SettingsJson settings)
         {
+            if (settings == null)
+                return null;
+
             return new SettingsJson
             {
                 ThreadNumbers = settings.ThreadNumbers,
