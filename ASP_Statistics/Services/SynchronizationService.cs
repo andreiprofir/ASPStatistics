@@ -41,8 +41,6 @@ namespace ASP_Statistics.Services
             List<ForecastJson> existingData = _dataService.GetForecasts();
             List<ForecastJson> forecasts = await _gamblingSupportService.GetForecastsAsync(1);
 
-            SetThreadNumbers(forecasts);
-
             foreach (ForecastJson forecast in forecasts)
             {
                 ForecastJson existsForecast = existingData.FirstOrDefault(x => x.Id == forecast.Id);
@@ -53,26 +51,12 @@ namespace ASP_Statistics.Services
                     forecast.GameResultType = GetGameResultType(existsForecast.GameResultType, forecast.GameResultType);
                     forecast.ShowAt = existsForecast.ShowAt;
                     forecast.BetValue = existsForecast.BetValue;
-                    forecast.ThreadNumber = existsForecast.ThreadNumber;
                 }
             }
 
             forecasts = forecasts.AsEnumerable().Reverse().ToList();
 
             await _dataService.SaveForecastsAsync(forecasts);
-        }
-
-        private void SetThreadNumbers(List<ForecastJson> forecasts)
-        {
-            foreach (var group in forecasts.GroupBy(x => new {x.ShowAt.Year, x.ShowAt.Month, x.ShowAt.Day}))
-            {
-                int index = 0;
-
-                foreach (ForecastJson forecast in group)
-                {
-                    forecast.ThreadNumber = index++;
-                }
-            }
         }
 
         private GameResultType GetGameResultType(GameResultType existsForecast, GameResultType forecast)

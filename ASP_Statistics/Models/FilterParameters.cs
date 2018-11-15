@@ -9,7 +9,7 @@ namespace ASP_Statistics.Models
 
         public ForecastType? ForecastType { get; set; }
 
-        public Month? Month { get; set; }
+        public Month Month { get; set; } = Month.All;
 
         public int? Year { get; set; }
 

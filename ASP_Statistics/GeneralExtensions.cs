@@ -10,7 +10,7 @@ namespace ASP_Statistics
         {
             return new StateJson
             {
-                Id = DateTimeOffset.Now.Millisecond,
+                Id = DateTimeOffset.Now.ToUnixTimeMilliseconds(),
                 Bank = state.Bank,
                 InitialBet = state.InitialBet,
                 Bets = state.Bets.ToList(),

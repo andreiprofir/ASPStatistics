@@ -49,7 +49,7 @@ namespace ASP_Statistics.Services
             if (filterParameters.GameResultType != null)
                 query = query.Where(x => x.GameResultType == filterParameters.GameResultType);
 
-            if (filterParameters.Month != null)
+            if (filterParameters.Month != Month.All)
                 query = query.Where(x => x.GameAt.Month == (int) filterParameters.Month);
 
             if (filterParameters.Year != null)
@@ -135,9 +135,29 @@ namespace ASP_Statistics.Services
                 forecastsForSave = _forecasts;
             }
 
+            SetThreadNumbers(forecastsForSave);
+
             string content = JsonConvert.SerializeObject(forecastsForSave);
 
             await File.WriteAllTextAsync(GetFilePath(fileName), content);
+        }
+
+        private static void SetThreadNumbers(List<ForecastJson> forecasts)
+        {
+            foreach (var group in forecasts.GroupBy(x => new {x.ShowAt.Year, x.ShowAt.Month, x.ShowAt.Day}))
+            {
+                int index = 0;
+
+                foreach (ForecastJson forecast in group)
+                {
+                    index += 1;
+
+                    if (index > 3)
+                        index = 0;
+
+                    forecast.ThreadNumber = index;
+                }
+            }
         }
 
         private static List<ForecastJson> GetForecastsForSave(List<ForecastJson> existingData, List<ForecastJson> forecasts, SaveMethod saveMethod)
