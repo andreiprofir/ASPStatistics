@@ -49,13 +49,10 @@ namespace ASP_Statistics.Controllers
             //    BetValueIncreaseStep = 0.1M,
             //    InitialBank = 325
             //});
-            //var banks = await _algorithmService.GetCalculatedBankValuesByBetAsync(new SettingsJson
-            //{
-            //    LowerBound = new DateTime(2018, 5, 1),
-            //    UpperBound = new DateTime(2018, 11, 1),
-            //    BetValueIncreaseStep = 0.1M,
-            //    InitialBetValue = 7
-            //});
+            var banks = await _algorithmService.GetCalculatedBankValuesByBetAsync(new CalculateBankValuesOptions
+            {
+                Bet = 5M
+            }, new DateTime(2018, 4, 1));
             decimal calculatedBank = _dataOldService.CalculateMaxBankValue(4);
 
             return View(model);

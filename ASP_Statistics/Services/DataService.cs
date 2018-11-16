@@ -152,12 +152,12 @@ namespace ASP_Statistics.Services
 
                 foreach (ForecastJson forecast in group)
                 {
+                    forecast.ThreadNumber = index;
+
                     index += 1;
 
                     if (index > _settings.ThreadNumbers - 1)
                         index = 0;
-
-                    forecast.ThreadNumber = index;
                 }
             }
         }
