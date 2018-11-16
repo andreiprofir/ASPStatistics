@@ -42,20 +42,20 @@ namespace ASP_Statistics.Controllers
             List<ForecastViewModel> model = _mapper.Map<List<ForecastJson>, List<ForecastViewModel>>(forecasts);
             
             decimal bet = _dataOldService.CalculateNextBetValue(325);
-            decimal bet2 = await _algorithmService.CalculateBetValueByBankAsync(new SettingsJson
-            {
-                LowerBound = new DateTime(2018, 5, 1),
-                UpperBound = new DateTime(2018, 11, 1),
-                BetValueIncreaseStep = 0.1M,
-                InitialBank = 325
-            });
-            var banks = await _algorithmService.GetCalculatedBankValuesByBetAsync(new SettingsJson
-            {
-                LowerBound = new DateTime(2018, 5, 1),
-                UpperBound = new DateTime(2018, 11, 1),
-                BetValueIncreaseStep = 0.1M,
-                InitialBetValue = 7
-            });
+            //decimal bet2 = await _algorithmService.CalculateBetValueByBankAsync(new SettingsJson
+            //{
+            //    LowerBound = new DateTime(2018, 5, 1),
+            //    UpperBound = new DateTime(2018, 11, 1),
+            //    BetValueIncreaseStep = 0.1M,
+            //    InitialBank = 325
+            //});
+            //var banks = await _algorithmService.GetCalculatedBankValuesByBetAsync(new SettingsJson
+            //{
+            //    LowerBound = new DateTime(2018, 5, 1),
+            //    UpperBound = new DateTime(2018, 11, 1),
+            //    BetValueIncreaseStep = 0.1M,
+            //    InitialBetValue = 7
+            //});
             decimal calculatedBank = _dataOldService.CalculateMaxBankValue(4);
 
             return View(model);

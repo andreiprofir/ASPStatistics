@@ -25,36 +25,72 @@ namespace ASP_Statistics.Services
                 ForecastJson previousForecast = _dataService.GetLastCalculatedForecastByIndex(forecast.ThreadNumber);
                 SettingsJson settings = _dataService.GetSettings();
 
-                return CalculateNextAlgorithmState(forecast, previousForecast,
-                    roundDecimals: settings.BetValueRoundDecimals, allowIncreaseBet: allowIncreaseBet);
+                return CalculateNextAlgorithmState(forecast, previousForecast, settings: settings,
+                    allowIncreaseBet: allowIncreaseBet);
             });
         }
 
-        public async Task<Dictionary<Month, decimal>> GetCalculatedBankValuesByBetAsync(SettingsJson settings = null)
+        public async Task<Dictionary<Month, decimal>> GetCalculatedBankValuesByBetAsync(CalculateBankValuesOptions options, 
+            DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null)
         {
-            return await Task.Run(() => CalculateBankValues(settings ?? _dataService.GetSettings()));
+            List<ForecastJson> forecasts = _dataService.GetResults(new FilterParameters
+            {
+                LowerBound = lowerBound, 
+                UpperBound = upperBound
+            });
+
+            return await Task.Run(() => CalculateBankValues(forecasts, options));
         }
 
-        public async Task<decimal> CalculateBetValueByBankAsync(SettingsJson settings = null)
+        public async Task<decimal> CalculateBetValueByBankAsync(CalculateBetValueOptions options)
         {
-            return await Task.Run(() => CalculateBetValue(settings));
+            return await Task.Run(() => CalculateBetValue(options));
         }
 
-        private decimal CalculateBetValue(SettingsJson settings)
+        private decimal CalculateBetValue(CalculateBetValueOptions options)
         {
-            settings = settings.Copy() ?? _dataService.GetSettings();
-            
-            settings.InitialBank -= settings.InitialBank * (decimal) settings.CoefficientBankReserve;
-            settings.InitialBetValue += settings.BetValueIncreaseStep;
-            
-            while (CalculateBankValues(settings).All(x => x.Value < settings.InitialBank)) 
-                settings.InitialBetValue += settings.BetValueIncreaseStep;
+            List<ForecastJson> forecasts = _dataService.GetResults(new FilterParameters
+            {
+                LowerBound = options.LowerBound, 
+                UpperBound = options.UpperBound
+            });
 
-            return settings.InitialBetValue - settings.BetValueIncreaseStep;
+            var bankOptions = new CalculateBankValuesOptions
+            {
+                ThreadNumbers = options.ThreadNumbers,
+                Bet = options.InitialBet + options.IncreaseBetStep,
+                CoefficientBankReserve = options.CoefficientBankReserve
+            };
+
+            while (CalculateBankValues(forecasts, bankOptions).All(x => x.Value < options.Bank))
+            {
+                options.InitialBet += options.IncreaseBetStep;
+                bankOptions.Bet += options.IncreaseBetStep;
+            }
+
+            return options.InitialBet;
+        }
+
+        private Dictionary<Month, decimal> CalculateBankValues(List<ForecastJson> forecasts, CalculateBankValuesOptions options)
+        {
+            var results = new Dictionary<Month, decimal>();
+            
+            decimal bank = CalculateBankValue(forecasts, options.Bet, options.CoefficientBankReserve, options.ThreadNumbers);
+
+            results[Month.All] = Math.Ceiling(bank);
+
+            foreach (var group in forecasts.GroupBy(x => x.GameAt.Month))
+            {
+                bank = CalculateBankValue(group.ToList(), options.Bet, options.CoefficientBankReserve, options.ThreadNumbers);
+
+                results[(Month) group.Key] = Math.Ceiling(bank);
+            }
+
+            return results;
         }
 
         private StateJson CalculateNextAlgorithmState(ForecastJson currentForecast, 
-            ForecastJson previousForecast, StateJson lastState = null, int roundDecimals = 2, bool allowIncreaseBet = false)
+            ForecastJson previousForecast, StateJson lastState = null, SettingsJson settings = null, bool allowIncreaseBet = false)
         {
             if (lastState == null)
                 lastState = _dataService.GetLastState();
@@ -68,11 +104,18 @@ namespace ASP_Statistics.Services
 
             if (allowIncreaseBet)
             {
-                SettingsJson settings = _dataService.GetSettings();
-                settings.InitialBetValue = state.InitialBet;
+                var options = new CalculateBetValueOptions
+                {
+                    InitialBet = state.InitialBet,
+                    LowerBound = settings?.LowerBound,
+                    UpperBound = settings?.UpperBound,
+                    ThreadNumbers = settings?.ThreadNumbers ?? 4,
+                    IncreaseBetStep = settings?.BetValueIncreaseStep ?? 0.01M,
+                    CoefficientBankReserve = settings?.CoefficientBankReserve ?? 0,
+                    Bank = state.Bank
+                };
 
-                state.InitialBet = CalculateBetValue(settings);
-                settings.InitialBetValue = state.InitialBet;
+                state.InitialBet = CalculateBetValue(options);
             }
 
             decimal result = 
@@ -85,9 +128,9 @@ namespace ASP_Statistics.Services
                 decimal betValue =
                     (state.InitialBet + state.LoseValues[index]) / (decimal) (currentForecast.Coefficient);
 
-                betValue += 5 / (decimal)Math.Pow(10, roundDecimals);
+                betValue += 5 / (decimal)Math.Pow(10, settings?.BetValueRoundDecimals ?? 2);
 
-                state.Bets[index] = Math.Round(betValue, roundDecimals);
+                state.Bets[index] = Math.Round(betValue, settings?.BetValueRoundDecimals ?? 2);
             }
             else
             {
@@ -103,32 +146,6 @@ namespace ASP_Statistics.Services
             state.Bank -= state.Bets[index];
 
             return state;
-        }
-
-        private Dictionary<Month, decimal> CalculateBankValues(SettingsJson settings)
-        {
-            List<ForecastJson> forecasts = _dataService.GetResults(new FilterParameters
-            {
-                LowerBound = settings.LowerBound, 
-                UpperBound = settings.UpperBound
-            });
-
-            var results = new Dictionary<Month, decimal>();
-            
-            decimal bank = CalculateBankValue(forecasts, settings.InitialBetValue, 
-                settings.CoefficientBankReserve, settings.ThreadNumbers);
-
-            results[Month.All] = Math.Ceiling(bank);
-
-            foreach (var group in forecasts.GroupBy(x => x.GameAt.Month))
-            {
-                bank = CalculateBankValue(group.ToList(), settings.InitialBetValue, 
-                    settings.CoefficientBankReserve, settings.ThreadNumbers);
-
-                results[(Month) group.Key] = Math.Ceiling(bank);
-            }
-
-            return results;
         }
 
         private decimal CalculateBankValue(List<ForecastJson> forecasts, decimal bet, 

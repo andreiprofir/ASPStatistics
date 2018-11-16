@@ -146,7 +146,7 @@ namespace ASP_Statistics.Services
 
         private static void SetThreadNumbers(List<ForecastJson> forecasts)
         {
-            foreach (var group in forecasts.GroupBy(x => new {x.ShowAt.Year, x.ShowAt.Month, x.ShowAt.Day}))
+            foreach (var group in forecasts.GroupBy(x => new {x.GameAt.Year, x.GameAt.Month, x.GameAt.Day}))
             {
                 var index = 0;
 
