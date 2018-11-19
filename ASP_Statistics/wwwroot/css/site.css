@@ -168,3 +168,14 @@ for details on configuring this project to bundle and minify static web assets. 
     bottom: 100px;
     z-index: 2000;
 }
+
+#saveBetsButton, #sync-container, #settings-container {
+    opacity: 0.3;
+    transition: 0.5s opacity linear;
+}
+
+#saveBetsButton:hover, 
+#sync-container:hover, 
+#settings-container:hover {
+    opacity: 1;
+}
