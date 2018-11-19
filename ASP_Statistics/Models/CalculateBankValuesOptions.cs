@@ -1,4 +1,6 @@
-﻿namespace ASP_Statistics.Models
+﻿using ASP_Statistics.Enums;
+
+namespace ASP_Statistics.Models
 {
     public class CalculateBankValuesOptions
     {

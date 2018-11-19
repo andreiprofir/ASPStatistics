@@ -1,4 +1,5 @@
 ﻿using System;
+using ASP_Statistics.Enums;
 using Newtonsoft.Json;
 
 namespace ASP_Statistics.JsonModels
@@ -22,6 +23,9 @@ namespace ASP_Statistics.JsonModels
 
         [JsonProperty("thread_numbers")]
         public int ThreadNumbers { get; set; } = 4;
+
+        [JsonProperty("calculation_method")]
+        public CalculationMethod CalculationMethod { get; set; } = CalculationMethod.Max;
 
         [JsonProperty("default_lower_bound")]
         public DateTimeOffset? LowerBound { get; set; } = new DateTime(2018, 4, 1);

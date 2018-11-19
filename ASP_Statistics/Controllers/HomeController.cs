@@ -40,20 +40,20 @@ namespace ASP_Statistics.Controllers
             List<ForecastJson> forecasts = _dataService.GetForecasts();
 
             List<ForecastViewModel> model = _mapper.Map<List<ForecastJson>, List<ForecastViewModel>>(forecasts);
-            
-            decimal bet = _dataOldService.CalculateNextBetValue(325);
-            //decimal bet2 = await _algorithmService.CalculateBetValueByBankAsync(new SettingsJson
-            //{
-            //    LowerBound = new DateTime(2018, 5, 1),
-            //    UpperBound = new DateTime(2018, 11, 1),
-            //    BetValueIncreaseStep = 0.1M,
-            //    InitialBank = 325
-            //});
-            var banks = await _algorithmService.GetCalculatedBankValuesByBetAsync(new CalculateBankValuesOptions
+
+            //decimal bet = _dataOldService.CalculateNextBetValue(325);
+            decimal bet2 = await _algorithmService.CalculateBetValueByBankAsync(new CalculateBetValueOptions
             {
-                Bet = 5M
-            }, new DateTime(2018, 4, 1));
-            decimal calculatedBank = _dataOldService.CalculateMaxBankValue(4);
+                Bank = 300
+            });
+            var banks = await _algorithmService.GetBankValuesByBetAsync(new CalculateBankValuesOptions
+            {
+                Bet = 2M
+            });
+            //decimal calculatedBank = _dataOldService.CalculateMaxBankValue(4);
+
+            //var a = await _algorithmService.GetWinLoseCountByThreadNumber();
+            //var b = a.Select(x => new { Key = x.Key, CountMax = x.Value.Max(y => y.Count), Res = x.Value.First(z => z.Count == x.Value.Max(f => f.Count)) }).ToList();
 
             return View(model);
         }

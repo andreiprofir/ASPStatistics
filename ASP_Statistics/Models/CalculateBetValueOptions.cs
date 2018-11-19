@@ -1,4 +1,5 @@
 ﻿using System;
+using ASP_Statistics.Enums;
 
 namespace ASP_Statistics.Models
 {
@@ -17,5 +18,7 @@ namespace ASP_Statistics.Models
         public DateTimeOffset? LowerBound { get; set; } = null;
 
         public DateTimeOffset? UpperBound { get; set; } = null;
+
+        public CalculationMethod CalculationMethod { get; set; } = CalculationMethod.Max;
     }
 }
