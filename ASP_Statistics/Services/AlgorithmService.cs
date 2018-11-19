@@ -86,6 +86,24 @@ namespace ASP_Statistics.Services
             return await Task.Run(() => CalculateWinLoseCountByThreads(lowerBound, upperBound));
         }
 
+        public async Task<List<decimal>> GetDefeatChainBets(decimal bet, double coefficient = 2.1)
+        {
+            return await Task.Run(() =>
+            {
+                var result = new List<decimal>();
+
+                for (var i = 0; i < 15; i++)
+                {
+                    decimal betValue = (bet + result.Sum()) / (decimal) (coefficient - 1);
+                    betValue = Math.Round(betValue + 0.005M, 2);
+
+                    result.Add(betValue);
+                }
+
+                return result;
+            });
+        }
+
         private Dictionary<int, List<WinLoseCountModel>> CalculateWinLoseCountByThreads(DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null)
         {
             var result = new Dictionary<int, List<WinLoseCountModel>>();

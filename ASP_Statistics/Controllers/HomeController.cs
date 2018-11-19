@@ -42,14 +42,16 @@ namespace ASP_Statistics.Controllers
             List<ForecastViewModel> model = _mapper.Map<List<ForecastJson>, List<ForecastViewModel>>(forecasts);
 
             //decimal bet = _dataOldService.CalculateNextBetValue(325);
-            decimal bet2 = await _algorithmService.CalculateBetValueByBankAsync(new CalculateBetValueOptions
-            {
-                Bank = 300
-            });
-            var banks = await _algorithmService.GetBankValuesByBetAsync(new CalculateBankValuesOptions
-            {
-                Bet = 2M
-            });
+            //decimal bet2 = await _algorithmService.CalculateBetValueByBankAsync(new CalculateBetValueOptions
+            //{
+            //    Bank = 300
+            //});
+            //var banks = await _algorithmService.GetBankValuesByBetAsync(new CalculateBankValuesOptions
+            //{
+            //    Bet = 2M
+            //});
+
+            //var bets = await _algorithmService.GetDefeatChainBets(5, 2.15);
             //decimal calculatedBank = _dataOldService.CalculateMaxBankValue(4);
 
             //var a = await _algorithmService.GetWinLoseCountByThreadNumber();

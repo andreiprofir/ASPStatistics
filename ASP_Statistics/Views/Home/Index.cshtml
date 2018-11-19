@@ -1,4 +1,5 @@
-﻿@model List<ForecastViewModel>
+﻿@using System.Globalization
+@model List<ForecastViewModel>
 @{
     ViewData["Title"] = "Forecasts";
 }
@@ -11,7 +12,7 @@
         {
             <div class="card-deck pb-5 border-bottom border-dark bs-2">
                 <div class="col-12">
-                    <h1 class="text-center">@group.FirstOrDefault()?.GameAt.ToString("d")</h1>
+                    <h1 class="text-center">@group.FirstOrDefault()?.GameAt.ToString("d", new CultureInfo("ru-RU"))</h1>
                 </div>
                 @for (var i = 0; i < group.Count(); i++)
                 {

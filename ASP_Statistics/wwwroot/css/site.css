@@ -69,6 +69,13 @@ for details on configuring this project to bundle and minify static web assets. 
     transition: box-shadow 300ms;
 }
 
+#settings-container {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    font-size: 4rem;
+}
+
 #sync-container {
     position: fixed;
     right: 0;
@@ -76,12 +83,12 @@ for details on configuring this project to bundle and minify static web assets. 
     font-size: 4rem;
 }
 
-#sync-container img {
+#sync-container img, #settings-container img {
     transition: transform 0.5s;
     height: 5rem;
 }
 
-#sync-container:hover img {
+#sync-container:hover img, #settings-container:hover img {
     transform: rotate(30deg);
 }
 

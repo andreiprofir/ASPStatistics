@@ -21,5 +21,7 @@ namespace ASP_Statistics.Services
 
         Task<Dictionary<int, List<WinLoseCountModel>>> GetWinLoseCountByThreadNumber(
             DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null);
+
+        Task<List<decimal>> GetDefeatChainBets(decimal bet, double coefficient = 2.1D);
     }
 }
