@@ -15,6 +15,9 @@ namespace ASP_Statistics.JsonModels
         [JsonProperty("bet_value_round_decimals")]
         public int BetValueRoundDecimals { get; set; } = 2;
 
+        [JsonProperty("allow_increase_bet_value")]
+        public bool AllowIncreaseBetValue { get; set; }
+
         [JsonProperty("bet_value_increase_step")]
         public decimal BetValueIncreaseStep { get; set; } = 0.01M;
 

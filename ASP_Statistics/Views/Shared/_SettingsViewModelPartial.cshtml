@@ -1,0 +1,89 @@
+﻿@using ASP_Statistics.Enums
+@model SettingsViewModel
+
+<form id="settingsForm" class="mb-3">
+    <fieldset disabled="disabled">
+        <div class="form-row">
+            <div class="form-group col">
+                <label asp-for="InitialBank"></label>
+                <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="0.1" asp-for="InitialBank">
+            </div>
+            <div class="form-group col">
+                <label asp-for="InitialBetValue"></label>
+                <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="0.1" asp-for="InitialBetValue">
+            </div>
+            <div class="form-group col">
+                <label asp-for="BetValueRoundDecimals"></label>
+                <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="1" asp-for="BetValueRoundDecimals">
+            </div>
+        </div>
+        <div class="form-row">
+            <div class="form-group col text-center">
+                <label asp-for="AllowIncreaseBetValue"></label>
+                <input type="checkbox" class="form-control" placeholder="Thread Number" aria-label="Thread Number" asp-for="AllowIncreaseBetValue">
+            </div>
+            <div class="form-group col">
+                <label asp-for="BetValueIncreaseStep"></label>
+                <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="0.01" asp-for="BetValueIncreaseStep">
+            </div>
+            <div class="form-group col">
+                <label asp-for="CoefficientBankReserve"></label>
+                <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="0.01" asp-for="CoefficientBankReserve">
+            </div>
+            <div class="form-group col">
+                <label asp-for="CalculationMethod"></label>
+                <select class="form-control custom-select" asp-items="Html.GetEnumSelectList<CalculationMethod>()" asp-for="CalculationMethod"></select>
+            </div>
+        </div>
+        <div class="row">
+            <div class="form-group col">
+                <label asp-for="LowerBound">Lower Bound</label>
+                <input class="form-control custom-select" asp-for="LowerBound" />
+            </div>
+            <div class="form-group col">
+                <label asp-for="UpperBound">Upper Bound</label>
+                <input class="form-control custom-select" asp-for="UpperBound" />
+            </div>
+            <div class="form-group col">
+                <label asp-for="ThreadNumbers"></label>
+                <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="1" asp-for="ThreadNumbers">
+            </div>
+            <div class="form-group col-auto d-flex align-items-end">
+                <button id="saveSettingsButton" type="button" class="btn btn-success">
+                    <i class="fas fa-save"></i>
+                    SAVE
+                </button>
+            </div>
+        </div>
+    </fieldset>
+</form>
+
+<script>
+    $(function() {
+        $('#settingsForm #LowerBound').datepicker({
+            uiLibrary: 'bootstrap4',
+            value: '@(Model.LowerBound?.ToString("d") ?? "")',
+            maxDate: function() {
+                return $('#settingsForm #UpperBound').val();
+            }
+        });
+
+        $('#settingsForm #UpperBound').datepicker({
+            uiLibrary: 'bootstrap4',
+            value: '@(Model.UpperBound?.ToString("d") ?? "")',
+            minDate: function() {
+                return $('#settingsForm #LowerBound').val();
+            }
+        });
+
+        $("#saveSettingsButton").click(function() {
+            toggleLoader();
+
+            $.post('@Url.Action("SaveSettingsAsync", "Home")',
+                $("#settingsForm").serialize(),
+                function(response) {
+                    toggleLoader();
+                });
+        });
+    })
+</script>

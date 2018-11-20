@@ -30,7 +30,11 @@ namespace ASP_Statistics
                 InitialBank = settings.InitialBank,
                 BetValueIncreaseStep = settings.BetValueIncreaseStep,
                 BetValueRoundDecimals = settings.BetValueRoundDecimals,
-                CoefficientBankReserve = settings.CoefficientBankReserve
+                CoefficientBankReserve = settings.CoefficientBankReserve,
+                LowerBound = settings.LowerBound,
+                UpperBound = settings.UpperBound,
+                CalculationMethod = settings.CalculationMethod,
+                AllowIncreaseBetValue = settings.AllowIncreaseBetValue
             };
         }
     }

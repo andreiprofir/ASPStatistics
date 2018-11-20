@@ -1,6 +1,95 @@
-﻿@model SettingsAndInfoViewModel
+﻿@using ASP_Statistics.Utils
+@model SettingsAndInfoViewModel
 
 <div class="row">
+    <div class="col-12 border-bottom">
+        <label class="h4 text-danger">Current State</label>
+        <div class="row mb-2">
+            <div class="col">
+                <span class="h2">
+                    <i class="fas fa-piggy-bank"></i>
+                    <span class="text-warning">@Model.BankValue</span>
+                </span>
+                <span class="h3 mr-5 ml-5">
+                    <i class="far fa-money-bill-alt"></i>
+                    <span class="text-info">@Model.BetValue</span>
+                </span>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <table class="table table-dark table-bordered">
+                    <thead>
+                    <tr>
+                        <th scope="col"></th>
+                        @for (var i = 0; i < Model.ThreadNumbers; i++)
+                        {
+                            <th class="@HtmlViewHelper.GetCssClassForBackGround(i)" scope="col">Thread[@i]</th>
+                        }
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr>
+                        <th scope="col">
+                            <i class="far fa-money-bill-alt"></i>
+                            Bet Values
+                        </th>
+                        @for (var i = 0; i < Model.ThreadNumbers; i++)
+                        {
+                            <td class="@HtmlViewHelper.GetCssClassForTextColor(i)">@Model.Bets[i]</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th scope="col">
+                            <i class="fas fa-window-close"></i>
+                            Lose Values
+                        </th>
+                        @for (var i = 0; i < Model.ThreadNumbers; i++)
+                        {
+                            <td class="@HtmlViewHelper.GetCssClassForTextColor(i)">@Model.LoseValues[i]</td>
+                        }
+                    </tr>
+                    <tr>
+                        <th scope="col">
+                            Bet Value Limits
+                        </th>
+                        <td colspan="@Model.ThreadNumbers">
+                            <div class="input-group">
+                                @foreach (var item in Model.BetValueLimits)
+                                {
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text font-weight-bold">@item.Key</span>
+                                    </div>
+                                    <input type="number" class="form-control" readonly="readonly" value="@item.Value">
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="col">
+                            Bank Value Limits
+                        </th>
+                        <td colspan="@Model.ThreadNumbers">
+                            <div class="input-group">
+                                @foreach (var item in Model.BankValueLimits)
+                                {
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text font-weight-bold">@item.Key</span>
+                                    </div>
+                                    <input type="number" class="form-control" readonly="readonly" value="@item.Value">
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 border-bottom">
+        <label class="h4">Settings<i id="editSettingsButton" class="fas fa-pen-square ml-3 hover-pointer text-danger"></i></label>
+        @await Html.PartialAsync("_SettingsViewModelPartial", Model.Settings)
+    </div>
     <div class="col-12 border-bottom">
         <label class="h4">Bets Chain</label>
         <div class="input-group mb-3">
@@ -51,5 +140,12 @@
         });
 
         $("#calculateChainBetsButton").click();
+
+        $("#editSettingsButton").click(function() {
+            $("#settingsForm fieldset").prop("disabled",
+                function (idx, oldProp) {
+                    return !oldProp;
+                });
+        });
     });
 </script>

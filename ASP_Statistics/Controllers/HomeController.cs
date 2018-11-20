@@ -64,7 +64,19 @@ namespace ASP_Statistics.Controllers
         public async Task<IActionResult> GetSettingsAndInfoPartial()
         {
             var model = new SettingsAndInfoViewModel();
+
+            StateJson lastState = _dataService.GetLastState() ?? new StateJson();
+            SettingsJson settings = _dataService.GetSettings();
+
+            model.BankValue = lastState.Bank;
+            model.BetValue = lastState.InitialBet;
+            model.Bets = lastState.Bets;
+            model.LoseValues = lastState.LoseValues;
+            model.ThreadNumbers = settings.ThreadNumbers;
+            model.Settings = _mapper.Map<SettingsJson, SettingsViewModel>(settings);
             
+            InitializeBetAndBankValueLimits(model);
+
             return PartialView("_SettingsAndInfoPartial", model);
         }
 
@@ -174,22 +186,42 @@ namespace ASP_Statistics.Controllers
             return PartialView("_StrategyChartsPartial", responseModel);
         }
 
-        public IActionResult Contact()
+        [HttpPost]
+        public async Task<IActionResult> SaveSettingsAsync(SettingsViewModel model)
         {
-            ViewData["Message"] = "Your contact page.";
+            SettingsJson settings = _mapper.Map<SettingsViewModel, SettingsJson>(model);
 
-            return View();
-        }
+            await _dataService.SaveSettingsAsync(settings);
 
-        public IActionResult Privacy()
-        {
-            return View();
+            return Ok();
         }
 
         [ResponseCache(Duration = 0, Location = ResponseCacheLocation.None, NoStore = true)]
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private void InitializeBetAndBankValueLimits(SettingsAndInfoViewModel model)
+        {
+            List<StateJson> stages = _dataService.GetStates();
+
+            var betValueLimits = new Dictionary<RepresentsValueType, decimal>
+            {
+                [RepresentsValueType.Min] = stages.Any() ? stages.Min(x => x.InitialBet) : 0,
+                [RepresentsValueType.Avg] = stages.Any() ? stages.Average(x => x.InitialBet) : 0,
+                [RepresentsValueType.Max] = stages.Any() ? stages.Max(x => x.InitialBet) : 0
+            };
+
+            var bankValueLimits = new Dictionary<RepresentsValueType, decimal>
+            {
+                [RepresentsValueType.Min] = stages.Any() ? stages.Min(x => x.Bank) : 0,
+                [RepresentsValueType.Avg] = stages.Any() ? stages.Average(x => x.Bank) : 0,
+                [RepresentsValueType.Max] = stages.Any() ? stages.Max(x => x.Bank) : 0
+            };
+
+            model.BetValueLimits = betValueLimits;
+            model.BankValueLimits = bankValueLimits;
         }
     }
 }
