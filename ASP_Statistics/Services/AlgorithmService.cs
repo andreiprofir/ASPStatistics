@@ -92,7 +92,7 @@ namespace ASP_Statistics.Services
             {
                 var result = new List<decimal>();
 
-                for (var i = 0; i < 15; i++)
+                for (var i = 0; i < 11; i++)
                 {
                     decimal betValue = (bet + result.Sum()) / (decimal) (coefficient - 1);
                     betValue = Math.Round(betValue + 0.005M, 2);

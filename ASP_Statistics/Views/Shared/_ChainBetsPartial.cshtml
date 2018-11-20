@@ -1,0 +1,9 @@
+﻿@model List<decimal>
+
+@for (var i = 1; i <= Model.Count; i++)
+{
+    <span class="input-group-text flex-fill">
+        <span class="text-danger">[@i]</span>
+        <span class="font-weight-bold">@Model[i - 1]</span>
+    </span>
+}

@@ -1,0 +1,55 @@
+﻿@model SettingsAndInfoViewModel
+
+<div class="row">
+    <div class="col-12 border-bottom">
+        <label class="h4">Bets Chain</label>
+        <div class="input-group mb-3">
+            <div id="bets-chain" class="input-group-prepend d-flex w-100">
+
+            </div>
+        </div>
+        <div class="input-group mb-3">
+            <input type="number" class="form-control" placeholder="Coefficient" aria-label="Coefficient" asp-for="ChainCoefficient" step="0.001">
+            <input type="number" class="form-control" placeholder="Bet Value" aria-label="Bet Value" asp-for="ChainBetValue" step="0.001">
+            <div class="input-group-append">
+                <button id="calculateChainBetsButton" class="btn btn-success" type="button" id="button-addon2">
+                    <i class="fas fa-calculator"></i>
+                    Calculate
+                </button>
+            </div>
+        </div>
+    </div>
+    <div class="col-12 border-bottom">
+        <label class="h4">Averages</label>
+        <div class="col">
+            <div class="input-group mb-3">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="basic-addon1"></span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    $(function() {
+        $("#calculateChainBetsButton").click(function() {
+            toggleLoader();
+
+            var model = {
+                coefficient: $("#ChainCoefficient").val(),
+                bet: $("#ChainBetValue").val()
+            };
+
+            $.post('@Url.Action("CalculateChainBetsAsync", "Home")',
+                model,
+                function(response) {
+                    $("#bets-chain").html($(response));
+
+                    toggleLoader();
+                });
+        });
+
+        $("#calculateChainBetsButton").click();
+    });
+</script>

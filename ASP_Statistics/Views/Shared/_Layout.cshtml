@@ -52,7 +52,7 @@
 <div id="body-content" class="container-fluid p-3">
     @RenderBody()
 
-    <div id="settings-container" class="d-inline-block hover-pointer m-3" data-toggle="modal" data-target="#settingsInfoModal">
+    <div id="settings-container" class="d-inline-block hover-pointer m-3">
         <img src="~/images/settings.svg" />
     </div>
     <div id="sync-container" class="d-inline-block hover-pointer m-3" data-toggle="modal" data-target="#syncModal">
@@ -61,7 +61,7 @@
 
     <!-- Modal -->
     <div class="modal fade" id="settingsInfoModal" tabindex="-1" role="dialog" aria-labelledby="settingsInfoModalTitle" aria-hidden="true">
-        <div class="modal-dialog modal-lg modal-dialog-centered" role="document">
+        <div class="modal-dialog modal-xlg modal-dialog-centered" role="document">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="settingsInfoModalTitle">Settings and Info</h5>
@@ -70,7 +70,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-
+                    
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
@@ -177,6 +177,18 @@
 
             $.post('@Url.Action("SyncForecasts", "Home")',
                 function() {
+                    toggleLoader();
+                });
+        });
+
+        $("#settings-container").click(function() {
+            toggleLoader();
+
+            $.get('@Url.Action("GetSettingsAndInfoPartial", "Home")',
+                function(response) {
+                    $("#settingsInfoModal .modal-body").html($(response));
+                    $('#settingsInfoModal').modal('toggle');
+
                     toggleLoader();
                 });
         });

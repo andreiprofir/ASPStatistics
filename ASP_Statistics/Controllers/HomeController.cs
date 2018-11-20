@@ -60,6 +60,22 @@ namespace ASP_Statistics.Controllers
             return View(model);
         }
 
+        [HttpGet]
+        public async Task<IActionResult> GetSettingsAndInfoPartial()
+        {
+            var model = new SettingsAndInfoViewModel();
+            
+            return PartialView("_SettingsAndInfoPartial", model);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CalculateChainBetsAsync(double coefficient, decimal bet)
+        {
+            List<decimal> model = await _algorithmService.GetDefeatChainBets(bet, coefficient);
+
+            return PartialView("_ChainBetsPartial", model);
+        }
+
         [HttpPost]
         public async Task<IActionResult> Index(List<ForecastViewModel> model)
         {
