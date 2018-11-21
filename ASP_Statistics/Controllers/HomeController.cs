@@ -97,6 +97,17 @@ namespace ASP_Statistics.Controllers
             return null;
         }
 
+        
+        [HttpPost]
+        public async Task<IActionResult> SaveCurrentStateAsync(StateViewModel model)
+        {
+            StateJson state = _mapper.Map<StateViewModel, StateJson>(model);
+
+            await _dataService.SaveState(state);
+            
+            return Json("Ok");
+        }
+
         [HttpPost]
         public async Task<IActionResult> SyncResults(bool rewriteAllData = false)
         {

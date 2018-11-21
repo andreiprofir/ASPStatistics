@@ -18,6 +18,8 @@ namespace ASP_Statistics.Utils
                 .ForMember(dest => dest.Bank, opt => opt.MapFrom(src => src.InitialBank))
                 .ForMember(dest => dest.InitialBet, opt => opt.MapFrom(src => src.InitialBetValue))
                 .ForMember(dest => dest.IncreaseBetStep, opt => opt.MapFrom(src => src.BetValueIncreaseStep));
+
+            CreateMap<StateJson, StateViewModel>().ReverseMap();
         }
     }
 }
