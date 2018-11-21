@@ -42,7 +42,7 @@ namespace ASP_Statistics.Services
             return await Task.Run(() => CalculateBankValues(forecasts, options));
         }
 
-        public async Task<Dictionary<CalculationMethod, decimal>> GetBankValuesByBetAsync(CalculateBankValuesOptions options, 
+        public async Task<Dictionary<CalculationMethod, decimal>> GetBankValuesByMethodsAsync(CalculateBankValuesOptions options, 
             DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null)
         {
             return await Task.Run(() =>
@@ -53,11 +53,28 @@ namespace ASP_Statistics.Services
                     UpperBound = upperBound
                 });
 
-                return GetBankValuesByMethod(forecasts, options);
+                return GetBankValuesByMethods(forecasts, options);
             });
         }
 
-        private Dictionary<CalculationMethod, decimal> GetBankValuesByMethod(List<ForecastJson> forecasts,
+        public async Task<decimal> GetBankValueByBetAndMethodAsync(CalculateBankValuesOptions options, CalculationMethod calculationMethod,
+            DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null)
+        {
+            return await Task.Run(() =>
+            {
+                List<ForecastJson> forecasts = _dataService.GetResults(new FilterParameters
+                {
+                    LowerBound = lowerBound, 
+                    UpperBound = upperBound
+                });
+
+                Dictionary<CalculationMethod, decimal> banks = GetBankValuesByMethods(forecasts, options);
+
+                return banks[calculationMethod];
+            });
+        }
+
+        private Dictionary<CalculationMethod, decimal> GetBankValuesByMethods(List<ForecastJson> forecasts,
             CalculateBankValuesOptions options)
         {
             Dictionary<Month, decimal> bankValues = CalculateBankValues(forecasts, options);
@@ -174,7 +191,7 @@ namespace ASP_Statistics.Services
                 CoefficientBankReserve = options.CoefficientBankReserve
             };
 
-            while (GetBankValuesByMethod(forecasts, bankOptions)[options.CalculationMethod] < options.Bank)
+            while (GetBankValuesByMethods(forecasts, bankOptions)[options.CalculationMethod] <= options.Bank)
             {
                 options.InitialBet += options.IncreaseBetStep;
                 bankOptions.Bet += options.IncreaseBetStep;

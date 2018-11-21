@@ -10,20 +10,8 @@ namespace ASP_Statistics.Models
 
         public decimal ChainBetValue { get; set; } = 1M;
 
-        public decimal BankValue { get; set; }
-
-        public decimal BetValue { get; set; }
-
-        public List<decimal> Bets { get; set; }
-
-        public List<decimal> LoseValues { get; set; }
-
-        public int ThreadNumbers { get; set; } = 4;
-
-        public Dictionary<RepresentsValueType, decimal> BetValueLimits { get; set; }
-
-        public Dictionary<RepresentsValueType, decimal> BankValueLimits { get; set; }
-
         public SettingsViewModel Settings { get; set; }
+
+        public StateViewModel LastState { get; set; }
     }
 }

@@ -6,11 +6,27 @@
         <div class="form-row">
             <div class="form-group col">
                 <label asp-for="InitialBank"></label>
-                <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="0.1" asp-for="InitialBank">
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="0.1" asp-for="InitialBank">
+                    <div class="input-group-append">
+                        <button id="calculateInitialBank" class="btn btn-success" type="button" id="button-addon2">
+                            <i class="fas fa-calculator"></i>
+                            Calculate
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="form-group col">
                 <label asp-for="InitialBetValue"></label>
-                <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="0.1" asp-for="InitialBetValue">
+                <div class="input-group mb-3">
+                    <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="0.1" asp-for="InitialBetValue">
+                    <div class="input-group-append">
+                        <button id="calculateInitialBetValue" class="btn btn-success" type="button" id="button-addon2">
+                            <i class="fas fa-calculator"></i>
+                            Calculate
+                        </button>
+                    </div>
+                </div>
             </div>
             <div class="form-group col">
                 <label asp-for="BetValueRoundDecimals"></label>
@@ -82,6 +98,30 @@
             $.post('@Url.Action("SaveSettingsAsync", "Home")',
                 $("#settingsForm").serialize(),
                 function(response) {
+                    toggleLoader();
+                });
+        });
+
+        $("#calculateInitialBank").click(function() {
+            toggleLoader();
+
+            $.post('@Url.Action("CalculateBankValueAsync", "Home")',
+                $("#settingsForm").serialize(),
+                function(response) {
+                    $("#InitialBank").val(response);
+
+                    toggleLoader();
+                });
+        });
+
+        $("#calculateInitialBetValue").click(function() {
+            toggleLoader();
+
+            $.post('@Url.Action("CalculateBetValueAsync", "Home")',
+                $("#settingsForm").serialize(),
+                function(response) {
+                    $("#InitialBetValue").val(response);
+
                     toggleLoader();
                 });
         });

@@ -3,12 +3,14 @@
 @{
     ViewData["Title"] = "Forecasts";
 }
-<form asp-controller="Home" asp-action="Index" method="post">
-    <button id="saveBetsButton" class="shadow btn btn-danger btn-lg m-3" type="submit">SAVE BETS</button>
+<form id="betsForm" asp-controller="Home" asp-action="SaveBetsAsync" method="post">
+    <div id="saveBetsButton" class="d-inline-block hover-pointer m-3">
+        <img src="~/images/save.svg" />
+    </div>
     @{
         var index = 0;
 
-        foreach (var group in Model.GroupBy(x => new {x.ShowAt.Year, x.ShowAt.Month, x.ShowAt.Day}))
+        foreach (var group in Model.GroupBy(x => new { x.ShowAt.Year, x.ShowAt.Month, x.ShowAt.Day }))
         {
             <div class="card-deck pb-5 border-bottom border-dark bs-2">
                 <div class="col-12">
@@ -40,6 +42,16 @@
             });
 
             $(".edit-forecast-button").click();
+
+            $("#saveBetsButton").click(function() {
+                toggleLoader();
+
+                $.post('@Url.Action("SaveBetsAsync", "Home")',
+                    $("#betsForm").serialize(),
+                    function(response) {
+                        toggleLoader();
+                    });
+            });
         });
     </script>
 }

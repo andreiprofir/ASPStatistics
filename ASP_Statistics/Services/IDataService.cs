@@ -28,5 +28,7 @@ namespace ASP_Statistics.Services
         Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend);
 
         Task SaveSettingsAsync(SettingsJson settings);
+
+        Task SaveState(params StateJson[] states);
     }
 }

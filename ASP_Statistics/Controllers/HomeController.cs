@@ -65,15 +65,12 @@ namespace ASP_Statistics.Controllers
         {
             var model = new SettingsAndInfoViewModel();
 
-            StateJson lastState = _dataService.GetLastState() ?? new StateJson();
+            StateJson lastState = _dataService.GetLastState();
             SettingsJson settings = _dataService.GetSettings();
 
-            model.BankValue = lastState.Bank;
-            model.BetValue = lastState.InitialBet;
-            model.Bets = lastState.Bets;
-            model.LoseValues = lastState.LoseValues;
-            model.ThreadNumbers = settings.ThreadNumbers;
             model.Settings = _mapper.Map<SettingsJson, SettingsViewModel>(settings);
+            model.LastState = _mapper.Map<StateJson, StateViewModel>(lastState);
+            model.LastState.ThreadNumbers = settings.ThreadNumbers;
             
             InitializeBetAndBankValueLimits(model);
 
@@ -89,7 +86,7 @@ namespace ASP_Statistics.Controllers
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(List<ForecastViewModel> model)
+        public async Task<IActionResult> SaveBetsAsync(List<ForecastViewModel> model)
         {
             //List<ForecastJson> forecasts = await _dataService.GetForecastsAsync();
 
@@ -116,20 +113,12 @@ namespace ASP_Statistics.Controllers
             return Json("Ok");
         }
 
+        [HttpGet]
         public IActionResult Statistics()
         {
             InitializeViewBags();
 
             return View();
-        }
-
-        private void InitializeViewBags()
-        {
-            ViewBag.Years = _dataOldService.Forecasts
-                .Select(x => x.GameAt.Year)
-                .Distinct()
-                .OrderBy(x => x)
-                .Select(x => new SelectListItem(x.ToString(), x.ToString()));
         }
 
         [HttpPost]
@@ -187,6 +176,28 @@ namespace ASP_Statistics.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> CalculateBankValueAsync(SettingsViewModel model)
+        {
+            CalculateBankValuesOptions options = _mapper.Map<SettingsViewModel, CalculateBankValuesOptions>(model);
+
+            decimal bankValue = await _algorithmService.GetBankValueByBetAndMethodAsync(options,
+                model.CalculationMethod, model.LowerBound, model.UpperBound);
+
+            return Json(bankValue);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> CalculateBetValueAsync(SettingsViewModel model)
+        {
+            CalculateBetValueOptions options = _mapper.Map<SettingsViewModel, CalculateBetValueOptions>(model);
+            options.InitialBet = 0;
+
+            decimal betValue = await _algorithmService.CalculateBetValueByBankAsync(options);
+
+            return Json(betValue);
+        }
+
+        [HttpPost]
         public async Task<IActionResult> SaveSettingsAsync(SettingsViewModel model)
         {
             SettingsJson settings = _mapper.Map<SettingsViewModel, SettingsJson>(model);
@@ -200,6 +211,15 @@ namespace ASP_Statistics.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        private void InitializeViewBags()
+        {
+            ViewBag.Years = _dataOldService.Forecasts
+                .Select(x => x.GameAt.Year)
+                .Distinct()
+                .OrderBy(x => x)
+                .Select(x => new SelectListItem(x.ToString(), x.ToString()));
         }
 
         private void InitializeBetAndBankValueLimits(SettingsAndInfoViewModel model)
@@ -220,8 +240,8 @@ namespace ASP_Statistics.Controllers
                 [RepresentsValueType.Max] = stages.Any() ? stages.Max(x => x.Bank) : 0
             };
 
-            model.BetValueLimits = betValueLimits;
-            model.BankValueLimits = bankValueLimits;
+            model.LastState.BetValueLimits = betValueLimits;
+            model.LastState.BankValueLimits = bankValueLimits;
         }
     }
 }

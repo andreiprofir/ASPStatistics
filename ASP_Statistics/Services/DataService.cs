@@ -78,7 +78,7 @@ namespace ASP_Statistics.Services
 
         public StateJson GetLastState()
         {
-            return _states.LastOrDefault();
+            return _states.LastOrDefault() ?? new StateJson();
         }
 
         public SettingsJson GetSettings()
@@ -117,6 +117,15 @@ namespace ASP_Statistics.Services
             string content = JsonConvert.SerializeObject(settings);
 
             await File.WriteAllTextAsync(GetFilePath(SettingsFile), content);
+        }
+
+        public async Task SaveState(params StateJson[] states)
+        {
+            _states.AddRange(states);
+
+            string content = JsonConvert.SerializeObject(_states);
+
+            await File.WriteAllTextAsync(GetFilePath(StatesFile), content);
         }
 
         private static async Task SaveForecastsIntoFileAsync(string fileName, List<ForecastJson> forecasts,

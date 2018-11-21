@@ -1,0 +1,100 @@
+﻿@using ASP_Statistics.Utils
+@model StateViewModel
+
+<form id="currentStateForm">
+    <fieldset id="currentStateFieldSet" disabled="disabled">
+        <div class="row mb-2">
+            <div class="col">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text"><i class="fas fa-piggy-bank"></i></span>
+                        <span class="input-group-text">Current Bank</span>
+                    </div>
+                    <input type="number" step="0.01" class="form-control form-control-lg text-warning font-weight-bold bg-transparent" asp-for="@Model.Bank">
+                </div>
+            </div>
+            <div class="col">
+                <div class="input-group mb-3">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text h4"><i class="far fa-money-bill-alt"></i></span>
+                        <span class="input-group-text h4">Current Bet Value</span>
+                    </div>
+                    <input type="number" step="0.01" class="form-control form-control-lg text-warning font-weight-bold bg-transparent" asp-for="@Model.InitialBet">
+                </div>
+            </div>
+        </div>
+        <div class="row mb-2">
+            <div class="col">
+                <table class="table table-dark table-bordered">
+                    <thead>
+                        <tr>
+                            <th scope="col"></th>
+                            @for (var i = 0; i < Model.ThreadNumbers; i++)
+                            {
+                                <th class="@HtmlViewHelper.GetCssClassForBackGround(i)" scope="col">Thread[@i]</th>
+                            }
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <th scope="col">
+                                <i class="far fa-money-bill-alt"></i>
+                                Bet Values
+                            </th>
+                            @for (var i = 0; i < Model.ThreadNumbers; i++)
+                            {
+                                <td>
+                                    <input type="number" class="form-control font-weight-bold bg-transparent @HtmlViewHelper.GetCssClassForTextColor(i)" asp-for="@Model.Bets[i]" step="0.01" />
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            <th scope="col">
+                                <i class="fas fa-window-close"></i>
+                                Lose Values
+                            </th>
+                            @for (var i = 0; i < Model.ThreadNumbers; i++)
+                            {
+                                <td>
+                                    <input type="number" class="form-control font-weight-bold bg-transparent @HtmlViewHelper.GetCssClassForTextColor(i)" asp-for="@Model.LoseValues[i]" step="0.01" />
+                                </td>
+                            }
+                        </tr>
+                        <tr>
+                            <th scope="col">
+                                Bet Value Limits
+                            </th>
+                            <td colspan="@Model.ThreadNumbers">
+                                <div class="input-group">
+                                    @foreach (var item in Model.BetValueLimits)
+                                    {
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text font-weight-bold">@item.Key</span>
+                                        </div>
+                                        <input type="number" class="form-control" readonly="readonly" value="@item.Value">
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                        <tr>
+                            <th scope="col">
+                                Bank Value Limits
+                            </th>
+                            <td colspan="@Model.ThreadNumbers">
+                                <div class="input-group">
+                                    @foreach (var item in Model.BankValueLimits)
+                                    {
+                                        <div class="input-group-prepend">
+                                            <span class="input-group-text font-weight-bold">@item.Key</span>
+                                        </div>
+                                        <input type="number" class="form-control" readonly="readonly" value="@item.Value">
+                                    }
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </fieldset>
+</form>
