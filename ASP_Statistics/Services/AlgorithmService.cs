@@ -222,8 +222,11 @@ namespace ASP_Statistics.Services
         private StateJson CalculateNextAlgorithmState(ForecastJson currentForecast, ForecastJson previousForecast, 
             StateJson lastState = null, SettingsJson settings = null, bool allowIncreaseBet = false)
         {
+            if (currentForecast == null)
+                return null;
+
             if (lastState == null)
-                lastState = _dataService.GetLastState() ?? new StateJson();
+                lastState = _dataService.GetLastState();
 
             StateJson state = lastState.Copy();
 

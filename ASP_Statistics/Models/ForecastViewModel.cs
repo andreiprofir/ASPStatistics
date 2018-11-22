@@ -31,5 +31,7 @@ namespace ASP_Statistics.Models
         public decimal BetValue { get; set; }
 
         public int? ThreadNumber { get; set; }
+
+        public bool SaveBet { get; set; }
     }
 }

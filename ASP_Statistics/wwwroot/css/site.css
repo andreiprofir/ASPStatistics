@@ -177,11 +177,14 @@ for details on configuring this project to bundle and minify static web assets. 
 }
 
 #saveBetsButton img {
-    transition: transform 0.5s;
     height: 5rem;
 }
 
-#saveBetsButton:hover img {
+#saveBetsButton {
+    transition: transform 0.5s linear, 0.5s opacity linear;
+}
+
+#saveBetsButton:hover {
     transform: scale(1.1, 1.1);
 }
 
@@ -192,4 +195,12 @@ for details on configuring this project to bundle and minify static web assets. 
 
 .modal-xlg {
     max-width: 90vw;
+}
+
+#betsForSaveBadge {
+    font-size: 1.5rem;
+    vertical-align: top;
+    position: absolute;
+    right: -1rem;
+    top: 0;
 }

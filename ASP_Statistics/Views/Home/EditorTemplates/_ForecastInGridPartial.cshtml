@@ -38,14 +38,27 @@
                 <span class="input-group-text">0.00</span>
             </div>
         </div>
-        <div class="input-group mb-1">
-            <div class="input-group-prepend">
-                <span class="input-group-text">
-                    <i class="fas fa-euro-sign"></i>
-                </span>
-                <span class="input-group-text">0.00</span>
+        <div class="row">
+            <div class="col">
+                <div class="input-group mb-1">
+                    <div class="input-group-prepend">
+                        <span class="input-group-text">
+                            <i class="fas fa-euro-sign"></i>
+                        </span>
+                        <span class="input-group-text">0.00</span>
+                    </div>
+                    <input type="number" class="form-control bet-value-input" placeholder="Bet Value" aria-label="Bet Value" asp-for="BetValue" step="0.001">
+                </div>
             </div>
-            <input type="number" class="form-control bet-value-input" placeholder="Bet Value" aria-label="Bet Value" asp-for="BetValue" step="0.001">
+            @if (isExpectation)
+            {
+                <div class="col-auto my-1">
+                    <div class="form-check">
+                        <input class="form-check-input" type="checkbox" asp-for="SaveBet">
+                        <label class="form-check-label" asp-for="SaveBet">Save</label>
+                    </div>
+                </div>
+            }
         </div>
         <div class="hidden-options-container">
             <div class="input-group mb-1">

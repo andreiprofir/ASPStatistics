@@ -142,7 +142,7 @@ namespace ASP_Statistics.Services
             }
             else if (fileName == ForecastsFile)
             {
-                _forecasts = GetForecastsForSave(needRewrite ? null : _results, forecasts, saveMethod);
+                _forecasts = GetForecastsForSave(needRewrite ? null : _forecasts, forecasts, saveMethod);
                 forecastsForSave = _forecasts;
             }
 

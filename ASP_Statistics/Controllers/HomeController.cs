@@ -37,27 +37,31 @@ namespace ASP_Statistics.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<ForecastJson> forecasts = _dataService.GetForecasts();
+            List<ForecastJson> forecasts = _dataService.GetForecasts(false);
 
             List<ForecastViewModel> model = _mapper.Map<List<ForecastJson>, List<ForecastViewModel>>(forecasts);
 
-            //decimal bet = _dataOldService.CalculateNextBetValue(325);
-            //decimal bet2 = await _algorithmService.CalculateBetValueByBankAsync(new CalculateBetValueOptions
-            //{
-            //    Bank = 300
-            //});
-            //var banks = await _algorithmService.GetBankValuesByBetAsync(new CalculateBankValuesOptions
-            //{
-            //    Bet = 2M
-            //});
-
-            //var bets = await _algorithmService.GetDefeatChainBets(5, 2.15);
-            //decimal calculatedBank = _dataOldService.CalculateMaxBankValue(4);
-
-            //var a = await _algorithmService.GetWinLoseCountByThreadNumber();
-            //var b = a.Select(x => new { Key = x.Key, CountMax = x.Value.Max(y => y.Count), Res = x.Value.First(z => z.Count == x.Value.Max(f => f.Count)) }).ToList();
+            await InitializeBetValues(model);
 
             return View(model);
+        }
+
+        private async Task InitializeBetValues(List<ForecastViewModel> model)
+        {
+            SettingsJson settings = _dataService.GetSettings();
+
+            for (int i = 0; i < settings.ThreadNumbers; i++)
+            {
+                ForecastViewModel currentForecast = model.LastOrDefault(x =>
+                    x.ThreadNumber == i && x.GameResultType == GameResultType.Expectation);
+
+                if (currentForecast == null) continue;
+
+                StateJson state = await _algorithmService.CalculateNextStateAsync(currentForecast.Id,
+                    settings.AllowIncreaseBetValue);
+
+                currentForecast.BetValue = state.Bets[i];
+            }
         }
 
         [HttpGet]

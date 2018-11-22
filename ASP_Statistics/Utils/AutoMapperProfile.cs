@@ -10,6 +10,7 @@ namespace ASP_Statistics.Utils
         {
             CreateMap<ForecastJson, ForecastViewModel>()
                 .ForMember(dest => dest.GameTeams, opt => opt.MapFrom(src => src.Game.ToString()));
+            CreateMap<ForecastViewModel, ForecastJson>();
 
             CreateMap<SettingsViewModel, CalculateBankValuesOptions>()
                 .ForMember(dest => dest.Bet, opt => opt.MapFrom(src => src.InitialBetValue));

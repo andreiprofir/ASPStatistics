@@ -6,6 +6,7 @@
 <form id="betsForm" asp-controller="Home" asp-action="SaveBetsAsync" method="post">
     <div id="saveBetsButton" class="d-inline-block hover-pointer m-3">
         <img src="~/images/save.svg" />
+        <span id="betsForSaveBadge" class="badge badge-danger">0</span>
     </div>
     @{
         var index = 0;
@@ -51,6 +52,16 @@
                     function(response) {
                         toggleLoader();
                     });
+            });
+
+            $("input[id$='SaveBet']").change(function() {
+                var number = parseInt($("#betsForSaveBadge").text());
+
+                if ($(this).is(":checked")) {
+                    $("#betsForSaveBadge").text(number + 1);
+                } else {
+                    $("#betsForSaveBadge").text(number - 1);
+                }
             });
         });
     </script>
