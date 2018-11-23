@@ -17,7 +17,8 @@ namespace ASP_Statistics.Services
             _dataService = dataService;
         }
         
-        public async Task<StateJson> CalculateNextStateAsync(long forecastId, bool allowIncreaseBet = true)
+        public async Task<StateJson> CalculateNextStateAsync(long forecastId, decimal? betValue = null,
+            bool? allowIncreaseBet = null)
         {
             return await Task.Run(() =>
             {
@@ -26,7 +27,7 @@ namespace ASP_Statistics.Services
                 SettingsJson settings = _dataService.GetSettings();
 
                 return CalculateNextAlgorithmState(forecast, previousForecast, settings: settings,
-                    allowIncreaseBet: allowIncreaseBet);
+                    allowIncreaseBet: allowIncreaseBet ?? settings.AllowIncreaseBetValue, betValue: betValue);
             });
         }
 
@@ -184,6 +185,8 @@ namespace ASP_Statistics.Services
                 UpperBound = options.UpperBound
             });
 
+            if (forecasts == null || !forecasts.Any()) return options.InitialBet;
+
             var bankOptions = new CalculateBankValuesOptions
             {
                 ThreadNumbers = options.ThreadNumbers,
@@ -220,7 +223,7 @@ namespace ASP_Statistics.Services
         }
 
         private StateJson CalculateNextAlgorithmState(ForecastJson currentForecast, ForecastJson previousForecast, 
-            StateJson lastState = null, SettingsJson settings = null, bool allowIncreaseBet = false)
+            StateJson lastState = null, SettingsJson settings = null, bool allowIncreaseBet = false, decimal? betValue = null)
         {
             if (currentForecast == null)
                 return null;
@@ -240,7 +243,7 @@ namespace ASP_Statistics.Services
 
             if (previousForecast == null)
             {
-                state.Bets[index] = GetBetValue(state.InitialBet, state.LoseValues[index], currentForecast.Coefficient,
+                state.Bets[index] = betValue ?? GetBetValue(state.InitialBet, state.LoseValues[index], currentForecast.Coefficient,
                     settings?.BetValueRoundDecimals ?? 2);
 
                 return state;
@@ -261,7 +264,7 @@ namespace ASP_Statistics.Services
                     state.LoseValues[index] = 0;
             }
 
-            state.Bets[index] = GetBetValue(state.InitialBet, state.LoseValues[index], currentForecast.Coefficient,
+            state.Bets[index] = betValue ?? GetBetValue(state.InitialBet, state.LoseValues[index], currentForecast.Coefficient,
                 settings?.BetValueRoundDecimals ?? 2);
 
             state.Bank -= state.Bets[index];

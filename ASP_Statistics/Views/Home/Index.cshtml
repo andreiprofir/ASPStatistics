@@ -63,6 +63,13 @@
                     $("#betsForSaveBadge").text(number - 1);
                 }
             });
+
+            var num = $("input[id$='SaveBet']").is(":checked").length;
+
+            if (num == undefined || num < 0)
+                num = 0;
+
+            $("#betsForSaveBadge").text(parseInt(num));
         });
     </script>
 }

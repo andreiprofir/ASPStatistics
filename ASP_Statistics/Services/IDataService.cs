@@ -29,6 +29,8 @@ namespace ASP_Statistics.Services
 
         Task SaveSettingsAsync(SettingsJson settings);
 
-        Task SaveState(params StateJson[] states);
+        Task SaveStateAsync(params StateJson[] states);
+
+        Task UpdateForecastsAsync(List<ForecastJson> forecasts);
     }
 }

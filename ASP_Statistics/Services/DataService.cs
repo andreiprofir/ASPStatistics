@@ -119,7 +119,7 @@ namespace ASP_Statistics.Services
             await File.WriteAllTextAsync(GetFilePath(SettingsFile), content);
         }
 
-        public async Task SaveState(params StateJson[] states)
+        public async Task SaveStateAsync(params StateJson[] states)
         {
             _states.AddRange(states);
 
@@ -128,8 +128,26 @@ namespace ASP_Statistics.Services
             await File.WriteAllTextAsync(GetFilePath(StatesFile), content);
         }
 
+        public async Task UpdateForecastsAsync(List<ForecastJson> forecasts)
+        {
+            foreach (ForecastJson srcForecast in forecasts)
+            {
+                ForecastJson destForecast = _forecasts.FirstOrDefault(x => x.Id == srcForecast.Id);
+
+                if (destForecast == null) continue;
+
+                destForecast.Coefficient = srcForecast.Coefficient;
+                destForecast.BetValue = srcForecast.BetValue;
+                destForecast.GameResultType = srcForecast.GameResultType;
+                destForecast.ShowAt = srcForecast.ShowAt;
+                destForecast.ThreadNumber = srcForecast.ThreadNumber;
+            }
+
+            await SaveForecastsIntoFileAsync(ForecastsFile, new List<ForecastJson>(), SaveMethod.Append, false);
+        }
+
         private static async Task SaveForecastsIntoFileAsync(string fileName, List<ForecastJson> forecasts,
-            SaveMethod saveMethod)
+            SaveMethod saveMethod, bool resetThreadNumbers = true)
         {
             List<ForecastJson> forecastsForSave = new List<ForecastJson>();
 
@@ -146,7 +164,7 @@ namespace ASP_Statistics.Services
                 forecastsForSave = _forecasts;
             }
 
-            SetThreadNumbers(forecastsForSave);
+            if (resetThreadNumbers) SetThreadNumbers(forecastsForSave);
 
             string content = JsonConvert.SerializeObject(forecastsForSave);
 
@@ -216,7 +234,6 @@ namespace ASP_Statistics.Services
 
             List<ForecastJson> forecasts = JsonConvert.DeserializeObject<List<ForecastJson>>(fileContent)
                 .Distinct(new ForecastJsonEqualityComparer())
-                .OrderByDescending(x => x.Id)
                 .ToList();
 
             return forecasts;

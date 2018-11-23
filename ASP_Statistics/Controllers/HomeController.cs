@@ -37,7 +37,7 @@ namespace ASP_Statistics.Controllers
 
         public async Task<IActionResult> Index()
         {
-            List<ForecastJson> forecasts = _dataService.GetForecasts(false);
+            List<ForecastJson> forecasts = _dataService.GetForecasts();
 
             List<ForecastViewModel> model = _mapper.Map<List<ForecastJson>, List<ForecastViewModel>>(forecasts);
 
@@ -46,26 +46,8 @@ namespace ASP_Statistics.Controllers
             return View(model);
         }
 
-        private async Task InitializeBetValues(List<ForecastViewModel> model)
-        {
-            SettingsJson settings = _dataService.GetSettings();
-
-            for (int i = 0; i < settings.ThreadNumbers; i++)
-            {
-                ForecastViewModel currentForecast = model.LastOrDefault(x =>
-                    x.ThreadNumber == i && x.GameResultType == GameResultType.Expectation);
-
-                if (currentForecast == null) continue;
-
-                StateJson state = await _algorithmService.CalculateNextStateAsync(currentForecast.Id,
-                    settings.AllowIncreaseBetValue);
-
-                currentForecast.BetValue = state.Bets[i];
-            }
-        }
-
         [HttpGet]
-        public async Task<IActionResult> GetSettingsAndInfoPartial()
+        public IActionResult GetSettingsAndInfoPartial()
         {
             var model = new SettingsAndInfoViewModel();
 
@@ -92,22 +74,23 @@ namespace ASP_Statistics.Controllers
         [HttpPost]
         public async Task<IActionResult> SaveBetsAsync(List<ForecastViewModel> model)
         {
-            //List<ForecastJson> forecasts = await _dataService.GetForecastsAsync();
+            ResetBetValues(model);
 
-            //List<ForecastViewModel> model = _mapper.Map<List<ForecastJson>, List<ForecastViewModel>>(forecasts);
+            List<ForecastJson> forecasts = _mapper.Map<List<ForecastViewModel>, List<ForecastJson>>(model);
 
-            //return View(model);
+            await _dataService.UpdateForecastsAsync(forecasts);
 
-            return null;
+            await SaveForecastBetsAsync(model);
+
+            return Json("Ok");
         }
 
-        
         [HttpPost]
         public async Task<IActionResult> SaveCurrentStateAsync(StateViewModel model)
         {
             StateJson state = _mapper.Map<StateViewModel, StateJson>(model);
 
-            await _dataService.SaveState(state);
+            await _dataService.SaveStateAsync(state);
             
             return Json("Ok");
         }
@@ -228,6 +211,47 @@ namespace ASP_Statistics.Controllers
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
         }
 
+        private void ResetBetValues(List<ForecastViewModel> model)
+        {
+            foreach (ForecastViewModel forecast in model)
+            {
+                if (forecast.GameResultType == GameResultType.Expectation && !forecast.SaveBet)
+                    forecast.BetValue = 0;
+            }
+        }
+
+        private async Task InitializeBetValues(List<ForecastViewModel> model)
+        {
+            SettingsJson settings = _dataService.GetSettings();
+
+            for (int i = 0; i < settings.ThreadNumbers; i++)
+            {
+                ForecastViewModel currentForecast = model.LastOrDefault(x =>
+                    x.ThreadNumber == i && x.GameResultType == GameResultType.Expectation);
+
+                if (currentForecast == null || currentForecast.BetValue > 0) continue;
+
+                StateJson state = await _algorithmService.CalculateNextStateAsync(currentForecast.Id,
+                    allowIncreaseBet: settings.AllowIncreaseBetValue);
+
+                currentForecast.BetValue = state.Bets[i];
+            }
+        }
+
+        private async Task SaveForecastBetsAsync(List<ForecastViewModel> forecasts)
+        {
+            IEnumerable<ForecastViewModel> query = forecasts
+                .Where(x => x.SaveBet && x.GameResultType == GameResultType.Expectation && x.BetValue > 0)
+                .Reverse();
+
+            foreach (var forecast in query)
+            {
+                StateJson state = await _algorithmService.CalculateNextStateAsync(forecast.Id, forecast.BetValue);
+
+                await _dataService.SaveStateAsync(state);
+            }
+        }
+
         private void InitializeViewBags()
         {
             ViewBag.Years = _dataOldService.Forecasts
@@ -244,14 +268,14 @@ namespace ASP_Statistics.Controllers
             var betValueLimits = new Dictionary<RepresentsValueType, decimal>
             {
                 [RepresentsValueType.Min] = stages.Any() ? stages.Min(x => x.InitialBet) : 0,
-                [RepresentsValueType.Avg] = stages.Any() ? stages.Average(x => x.InitialBet) : 0,
+                [RepresentsValueType.Avg] = stages.Any() ? Math.Round(stages.Average(x => x.InitialBet), 2) : 0,
                 [RepresentsValueType.Max] = stages.Any() ? stages.Max(x => x.InitialBet) : 0
             };
 
             var bankValueLimits = new Dictionary<RepresentsValueType, decimal>
             {
                 [RepresentsValueType.Min] = stages.Any() ? stages.Min(x => x.Bank) : 0,
-                [RepresentsValueType.Avg] = stages.Any() ? stages.Average(x => x.Bank) : 0,
+                [RepresentsValueType.Avg] = stages.Any() ? Math.Round(stages.Average(x => x.Bank), 2) : 0,
                 [RepresentsValueType.Max] = stages.Any() ? stages.Max(x => x.Bank) : 0
             };
 

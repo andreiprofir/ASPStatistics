@@ -9,7 +9,8 @@ namespace ASP_Statistics.Utils
         public AutoMapperProfile()
         {
             CreateMap<ForecastJson, ForecastViewModel>()
-                .ForMember(dest => dest.GameTeams, opt => opt.MapFrom(src => src.Game.ToString()));
+                .ForMember(dest => dest.GameTeams, opt => opt.MapFrom(src => src.Game.ToString()))
+                .ForMember(dest => dest.SaveBet, opt => opt.MapFrom(src => src.BetValue > 0));
             CreateMap<ForecastViewModel, ForecastJson>();
 
             CreateMap<SettingsViewModel, CalculateBankValuesOptions>()

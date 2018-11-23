@@ -63,7 +63,7 @@
         <div class="hidden-options-container">
             <div class="input-group mb-1">
                 <div class="input-group-prepend w-50">
-                    <span class="input-group-text bg-danger w-100"></span>
+                    <span class="input-group-text w-100 @HtmlViewHelper.GetCssClassForBackGround(Model.ThreadNumber)"></span>
                 </div>
                 <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" asp-for="ThreadNumber">
             </div>
@@ -78,13 +78,13 @@
                     <span class="input-group-text">Show At</span>
                 </div>
                 <div class="input-group-append flex-fill">
-                    <input datepicker class="form-control" placeholder="Show At" asp-for="ShowAt" />
+                    <input class="form-control show-at-data-picker" placeholder="Show At" asp-for="ShowAt" />
                 </div>
             </div>
         </div>
         <div class="input-group">
             <div class="col p-0">
-                <button class="edit-forecast-button btn btn-warning w-100 font-weight-bold" type="button" @hiddenAttr>
+                <button class="edit-forecast-button btn btn-warning w-100 font-weight-bold" type="button">
                     <i class="fas fa-pen-square"></i>
                     EDIT
                 </button>
@@ -95,20 +95,27 @@
 
 <script>
     $(function() {
-        $("input[datepicker]").datepicker({
+        $("div[id='@Model.Id'] .show-at-data-picker").datepicker({
             uiLibrary: 'bootstrap4',
             value: '@Model.ShowAt.ToString("d")'
         });
 
-        $("input[datepicker]").removeProp("datepicker");
-
-        if ($("div[timer]") != undefined) {
-            startCountdown($("div[timer]"), new Date(Date.parse('@Model.GameAt.ToString("d")')));
-            $("div[timer]").removeProp("timer");
+        if ($("div[id='@Model.Id'] div[timer]") != undefined) {
+            startCountdown($("div[id='@Model.Id'] div[timer]"), new Date(Date.parse('@Model.GameAt.ToString("d")')));
+            $("div[id='@Model.Id'] div[timer]").removeProp("timer");
         }
 
         if ('@isExpectation'.toLowerCase() === 'false') {
             $("#@Model.Id").find(".bet-value-input").prop("readonly", true);
         }
+
+        $("input[id$='ThreadNumber']").keyup(function() {
+            var cssClass = getCssBgClass(parseInt($(this).val()));
+
+            $(this).parent()
+                .find('span')
+                .removeClass()
+                .addClass("input-group-text w-100 " + cssClass);
+        });
     });
 </script>

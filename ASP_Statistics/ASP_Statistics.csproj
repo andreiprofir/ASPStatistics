@@ -13,12 +13,6 @@
   </ItemGroup>
 
   <ItemGroup>
-    <Content Update="files\ASB_2018_Stat.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
-    <Content Update="files\asb_stat_initial.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
     <Content Update="Views\Home\EditorTemplates\_ForecastInGridPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
