@@ -33,5 +33,7 @@ namespace ASP_Statistics.Models
         public int? ThreadNumber { get; set; }
 
         public bool SaveBet { get; set; }
+
+        public bool AllowModification { get; set; }
     }
 }

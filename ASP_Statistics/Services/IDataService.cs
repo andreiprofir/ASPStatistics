@@ -23,9 +23,9 @@ namespace ASP_Statistics.Services
 
         ForecastJson GetLastCalculatedForecastByIndex(int index);
 
-        Task SaveResultsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend);
+        Task SaveResultsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Append);
 
-        Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Prepend);
+        Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Append);
 
         Task SaveSettingsAsync(SettingsJson settings);
 

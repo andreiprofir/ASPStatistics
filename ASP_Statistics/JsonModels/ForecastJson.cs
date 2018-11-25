@@ -44,5 +44,8 @@ namespace ASP_Statistics.JsonModels
 
         [JsonProperty("number_of_thread")]
         public int ThreadNumber { get; set; }
+
+        [JsonProperty("allow_modification")]
+        public bool AllowModification { get; set; } = true;
     }
 }

@@ -1,1 +1,278 @@
-[{"forecast_id":5555,"forecast_type":0,"forecast_coefficient":2.03,"forecast_bet":"Ф2 (-2) ","forecast_result":2,"game_match_at":"2018-10-24T16:00:00+03:00","forecast_show_at":"2018-10-23T00:00:00+03:00","tournament_name":"ATP Базель","sport_id":8,"country_name":"Швейцария","game":{"home":{"team_name":"Гулбис"},"guest":{"team_name":"Сок"}},"bet_value":0.0,"number_of_thread":0},{"forecast_id":5556,"forecast_type":0,"forecast_coefficient":2.43,"forecast_bet":"2 с ОТ","forecast_result":1,"game_match_at":"2018-10-24T20:00:00+03:00","forecast_show_at":"2018-10-23T00:00:00+03:00","tournament_name":"Еврокубок","sport_id":3,"country_name":"Международный","game":{"home":{"team_name":"Галатасарай"},"guest":{"team_name":"Монако"}},"bet_value":0.0,"number_of_thread":1},{"forecast_id":5559,"forecast_type":0,"forecast_coefficient":2.07,"forecast_bet":"Тб 2,5","forecast_result":1,"game_match_at":"2018-10-24T22:00:00+03:00","forecast_show_at":"2018-10-23T00:00:00+03:00","tournament_name":"Лига Чемпионов УЕФА","sport_id":1,"country_name":"Международный","game":{"home":{"team_name":"Боррусия Дортмунд"},"guest":{"team_name":"Атлетико"}},"bet_value":0.0,"number_of_thread":2},{"forecast_id":5558,"forecast_type":0,"forecast_coefficient":2.17,"forecast_bet":"Тб 2,5","forecast_result":1,"game_match_at":"2018-10-24T22:00:00+03:00","forecast_show_at":"2018-10-23T00:00:00+03:00","tournament_name":"Чемпион-Лига Англия","sport_id":1,"country_name":"Англия","game":{"home":{"team_name":"Болтон"},"guest":{"team_name":"Ноттингем Форест"}},"bet_value":0.0,"number_of_thread":3},{"forecast_id":5560,"forecast_type":0,"forecast_coefficient":2.22,"forecast_bet":"Тм 5,5","forecast_result":0,"game_match_at":"2018-10-25T02:00:00+03:00","forecast_show_at":"2018-10-24T00:00:00+03:00","tournament_name":"НХЛ","sport_id":4,"country_name":"США","game":{"home":{"team_name":"Нью-Йорк Айлендерс"},"guest":{"team_name":"Флорида Пантерз"}},"bet_value":0.0,"number_of_thread":0},{"forecast_id":5563,"forecast_type":0,"forecast_coefficient":2.03,"forecast_bet":"1 с ОТ","forecast_result":0,"game_match_at":"2018-10-25T03:40:00+03:00","forecast_show_at":"2018-10-24T00:00:00+03:00","tournament_name":"LNB Аргентина","sport_id":3,"country_name":"Аргентина","game":{"home":{"team_name":"Регатас"},"guest":{"team_name":"Сан-Мартин Коринтиас"}},"bet_value":0.0,"number_of_thread":1},{"forecast_id":5562,"forecast_type":0,"forecast_coefficient":2.28,"forecast_bet":"Тб 3 для 1-й команды","forecast_result":0,"game_match_at":"2018-10-25T20:30:00+03:00","forecast_show_at":"2018-10-24T00:00:00+03:00","tournament_name":"DEL","sport_id":4,"country_name":"Германия","game":{"home":{"team_name":"Стробинг Тайгерс"},"guest":{"team_name":"Гризли Вольфсбург"}},"bet_value":0.0,"number_of_thread":2},{"forecast_id":5561,"forecast_type":0,"forecast_coefficient":2.06,"forecast_bet":"Тб 3","forecast_result":0,"game_match_at":"2018-10-25T22:00:00+03:00","forecast_show_at":"2018-10-24T00:00:00+03:00","tournament_name":"Лига Европы УЕФА","sport_id":1,"country_name":"Международный","game":{"home":{"team_name":"Марсель"},"guest":{"team_name":"Лацио"}},"bet_value":0.0,"number_of_thread":3},{"forecast_id":5567,"forecast_type":0,"forecast_coefficient":2.37,"forecast_bet":"2","forecast_result":0,"game_match_at":"2018-10-26T20:30:00+03:00","forecast_show_at":"2018-10-25T00:00:00+03:00","tournament_name":"DEL","sport_id":4,"country_name":"Германия","game":{"home":{"team_name":"Фиштаун Пинвинз"},"guest":{"team_name":"Айсберен Берлин"}},"bet_value":0.0,"number_of_thread":0},{"forecast_id":5565,"forecast_type":0,"forecast_coefficient":2.4,"forecast_bet":"Ф1 (0) ","forecast_result":0,"game_match_at":"2018-10-26T21:30:00+03:00","forecast_show_at":"2018-10-25T00:00:00+03:00","tournament_name":"Бундеслига","sport_id":1,"country_name":"Германия","game":{"home":{"team_name":"Фрайбург"},"guest":{"team_name":"Боруссия М"}},"bet_value":0.0,"number_of_thread":1},{"forecast_id":5564,"forecast_type":0,"forecast_coefficient":2.13,"forecast_bet":"1","forecast_result":0,"game_match_at":"2018-10-26T21:30:00+03:00","forecast_show_at":"2018-10-25T00:00:00+03:00","tournament_name":"Плюс-лига Польши","sport_id":5,"country_name":"Польша","game":{"home":{"team_name":"Чарни Радом"},"guest":{"team_name":"Онико Варшава"}},"bet_value":0.0,"number_of_thread":2},{"forecast_id":5568,"forecast_type":0,"forecast_coefficient":2.11,"forecast_bet":"Тб 2,5","forecast_result":0,"game_match_at":"2018-10-26T21:45:00+03:00","forecast_show_at":"2018-10-25T00:00:00+03:00","tournament_name":"Чемпион-Лига Англия","sport_id":1,"country_name":"Англия","game":{"home":{"team_name":"КПР"},"guest":{"team_name":"Астон Вилла"}},"bet_value":0.0,"number_of_thread":3}]
+[
+  {
+    "forecast_id": 5555,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.03,
+    "forecast_bet": "Ф2 (-2) ",
+    "forecast_result": 2,
+    "game_match_at": "2018-10-24T16:00:00+03:00",
+    "forecast_show_at": "2018-10-23T00:00:00+03:00",
+    "tournament_name": "ATP Базель",
+    "sport_id": 8,
+    "country_name": "Швейцария",
+    "game": {
+      "home": {
+        "team_name": "Гулбис"
+      },
+      "guest": {
+        "team_name": "Сок"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 0,
+    "allow_modification": false
+  },
+  {
+    "forecast_id": 5556,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.43,
+    "forecast_bet": "2 с ОТ",
+    "forecast_result": 1,
+    "game_match_at": "2018-10-24T20:00:00+03:00",
+    "forecast_show_at": "2018-10-23T00:00:00+03:00",
+    "tournament_name": "Еврокубок",
+    "sport_id": 3,
+    "country_name": "Международный",
+    "game": {
+      "home": {
+        "team_name": "Галатасарай"
+      },
+      "guest": {
+        "team_name": "Монако"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 1,
+    "allow_modification": false
+  },
+  {
+    "forecast_id": 5559,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.07,
+    "forecast_bet": "Тб 2,5",
+    "forecast_result": 1,
+    "game_match_at": "2018-10-24T22:00:00+03:00",
+    "forecast_show_at": "2018-10-23T00:00:00+03:00",
+    "tournament_name": "Лига Чемпионов УЕФА",
+    "sport_id": 1,
+    "country_name": "Международный",
+    "game": {
+      "home": {
+        "team_name": "Боррусия Дортмунд"
+      },
+      "guest": {
+        "team_name": "Атлетико"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 2,
+    "allow_modification": false
+  },
+  {
+    "forecast_id": 5558,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.17,
+    "forecast_bet": "Тб 2,5",
+    "forecast_result": 1,
+    "game_match_at": "2018-10-24T22:00:00+03:00",
+    "forecast_show_at": "2018-10-23T00:00:00+03:00",
+    "tournament_name": "Чемпион-Лига Англия",
+    "sport_id": 1,
+    "country_name": "Англия",
+    "game": {
+      "home": {
+        "team_name": "Болтон"
+      },
+      "guest": {
+        "team_name": "Ноттингем Форест"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 3,
+    "allow_modification": false
+  },
+  {
+    "forecast_id": 5560,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.22,
+    "forecast_bet": "Тм 5,5",
+    "forecast_result": 1,
+    "game_match_at": "2018-10-25T02:00:00+03:00",
+    "forecast_show_at": "2018-10-24T00:00:00+03:00",
+    "tournament_name": "НХЛ",
+    "sport_id": 4,
+    "country_name": "США",
+    "game": {
+      "home": {
+        "team_name": "Нью-Йорк Айлендерс"
+      },
+      "guest": {
+        "team_name": "Флорида Пантерз"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 0,
+    "allow_modification": false
+  },
+  {
+    "forecast_id": 5563,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.03,
+    "forecast_bet": "1 с ОТ",
+    "forecast_result": 1,
+    "game_match_at": "2018-10-25T03:40:00+03:00",
+    "forecast_show_at": "2018-10-24T00:00:00+03:00",
+    "tournament_name": "LNB Аргентина",
+    "sport_id": 3,
+    "country_name": "Аргентина",
+    "game": {
+      "home": {
+        "team_name": "Регатас"
+      },
+      "guest": {
+        "team_name": "Сан-Мартин Коринтиас"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 1,
+    "allow_modification": false
+  },
+  {
+    "forecast_id": 5562,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.28,
+    "forecast_bet": "Тб 3 для 1-й команды",
+    "forecast_result": 0,
+    "game_match_at": "2018-10-25T20:30:00+03:00",
+    "forecast_show_at": "2018-10-24T00:00:00+03:00",
+    "tournament_name": "DEL",
+    "sport_id": 4,
+    "country_name": "Германия",
+    "game": {
+      "home": {
+        "team_name": "Стробинг Тайгерс"
+      },
+      "guest": {
+        "team_name": "Гризли Вольфсбург"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 2,
+    "allow_modification": true
+  },
+  {
+    "forecast_id": 5561,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.06,
+    "forecast_bet": "Тб 3",
+    "forecast_result": 0,
+    "game_match_at": "2018-10-25T22:00:00+03:00",
+    "forecast_show_at": "2018-10-24T00:00:00+03:00",
+    "tournament_name": "Лига Европы УЕФА",
+    "sport_id": 1,
+    "country_name": "Международный",
+    "game": {
+      "home": {
+        "team_name": "Марсель"
+      },
+      "guest": {
+        "team_name": "Лацио"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 3,
+    "allow_modification": true
+  },
+  {
+    "forecast_id": 5567,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.37,
+    "forecast_bet": "2",
+    "forecast_result": 0,
+    "game_match_at": "2018-10-26T20:30:00+03:00",
+    "forecast_show_at": "2018-10-25T00:00:00+03:00",
+    "tournament_name": "DEL",
+    "sport_id": 4,
+    "country_name": "Германия",
+    "game": {
+      "home": {
+        "team_name": "Фиштаун Пинвинз"
+      },
+      "guest": {
+        "team_name": "Айсберен Берлин"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 0,
+    "allow_modification": true
+  },
+  {
+    "forecast_id": 5565,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.4,
+    "forecast_bet": "Ф1 (0) ",
+    "forecast_result": 0,
+    "game_match_at": "2018-10-26T21:30:00+03:00",
+    "forecast_show_at": "2018-10-25T00:00:00+03:00",
+    "tournament_name": "Бундеслига",
+    "sport_id": 1,
+    "country_name": "Германия",
+    "game": {
+      "home": {
+        "team_name": "Фрайбург"
+      },
+      "guest": {
+        "team_name": "Боруссия М"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 1,
+    "allow_modification": true
+  },
+  {
+    "forecast_id": 5564,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.13,
+    "forecast_bet": "1",
+    "forecast_result": 0,
+    "game_match_at": "2018-10-26T21:30:00+03:00",
+    "forecast_show_at": "2018-10-25T00:00:00+03:00",
+    "tournament_name": "Плюс-лига Польши",
+    "sport_id": 5,
+    "country_name": "Польша",
+    "game": {
+      "home": {
+        "team_name": "Чарни Радом"
+      },
+      "guest": {
+        "team_name": "Онико Варшава"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 2,
+    "allow_modification": true
+  },
+  {
+    "forecast_id": 5568,
+    "forecast_type": 0,
+    "forecast_coefficient": 2.11,
+    "forecast_bet": "Тб 2,5",
+    "forecast_result": 0,
+    "game_match_at": "2018-10-26T21:45:00+03:00",
+    "forecast_show_at": "2018-10-25T00:00:00+03:00",
+    "tournament_name": "Чемпион-Лига Англия",
+    "sport_id": 1,
+    "country_name": "Англия",
+    "game": {
+      "home": {
+        "team_name": "КПР"
+      },
+      "guest": {
+        "team_name": "Астон Вилла"
+      }
+    },
+    "bet_value": 0,
+    "number_of_thread": 3,
+    "allow_modification": true
+  }
+]

@@ -200,15 +200,17 @@ namespace ASP_Statistics.Services
             IEnumerable<ForecastJson> query;
 
             if (saveMethod == SaveMethod.Append)
-                query = existingData.Concat(forecasts);
+            {
+                query = existingData
+                    .Where(x => forecasts.All(y => y.Id != x.Id))
+                    .Concat(forecasts);
+            }
             else
+            {
                 query = forecasts.Concat(existingData);
+            }
 
-            forecasts = query
-                .Distinct(new ForecastJsonEqualityComparer())
-                .ToList();
-
-            return forecasts;
+            return query.Distinct(new ForecastJsonEqualityComparer()).ToList();
         }
 
         private static async Task<List<StateJson>> GetStatesAsync()

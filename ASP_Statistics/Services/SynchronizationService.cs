@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using ASP_Statistics.Enums;
@@ -56,7 +57,17 @@ namespace ASP_Statistics.Services
 
             forecasts = forecasts.AsEnumerable().Reverse().ToList();
 
+            SetModificationRestrictions(forecasts);
+
             await _dataService.SaveForecastsAsync(forecasts);
+        }
+
+        private void SetModificationRestrictions(List<ForecastJson> forecasts)
+        {
+            foreach (ForecastJson forecast in forecasts)
+            {
+                forecast.AllowModification = forecast.GameResultType == GameResultType.Expectation;
+            }
         }
 
         private GameResultType GetGameResultType(GameResultType existsForecast, GameResultType forecast)

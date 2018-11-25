@@ -7,7 +7,7 @@
     string borderClass = HtmlViewHelper.GetCssClassForBorderBy(Model.ThreadNumber);
     bool isExpectation = Model.GameResultType == GameResultType.Expectation;
     string attr = isExpectation && Model.GameAt > DateTimeOffset.Now ? "timer" : "";
-    string hiddenAttr = isExpectation ? "" : "hidden";
+    string hiddenAttr = Model.AllowModification ? "" : "hidden";
 }
 
 <div id="@Model.Id" class="card bs-2 hover-pointer hover-shadow @borderClass">
@@ -84,7 +84,7 @@
         </div>
         <div class="input-group">
             <div class="col p-0">
-                <button class="edit-forecast-button btn btn-warning w-100 font-weight-bold" type="button">
+                <button class="edit-forecast-button btn btn-warning w-100 font-weight-bold" type="button" @hiddenAttr>
                     <i class="fas fa-pen-square"></i>
                     EDIT
                 </button>
