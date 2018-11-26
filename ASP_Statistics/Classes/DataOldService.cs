@@ -1417,6 +1417,70 @@ namespace ASP_Statistics.Classes
             return winLoseChart;
         }
 
+        //class Temp
+        //{
+        //    public GameResultType Last { get; set; }
+
+        //    public int Count { get; set; }
+        //}
+
+        //private static void SetThreadNumbers(List<ForecastJson> forecasts)
+        //{
+        //    var lasts = new List<Temp>
+        //    {
+        //        new Temp {Last = forecasts[0].GameResultType, Count = 1},
+        //        new Temp {Last = forecasts[1].GameResultType, Count = 1},
+        //        new Temp {Last = forecasts[2].GameResultType, Count = 1},
+        //        new Temp {Last = forecasts[3].GameResultType, Count = 1}
+        //    };
+        //    var tempForecasts = new List<ForecastJson>();
+
+        //    var index = 0;
+
+        //    for (var i = 4; i < forecasts.Count - 4; i += 4)
+        //    {
+        //        for (var j = 0; j < 4; j++)
+        //        {
+        //            tempForecasts.Add(forecasts[i + j]);
+        //        }
+
+        //        tempForecasts = tempForecasts.OrderByDescending(x => x.Coefficient).ToList();
+
+        //        List<Temp> defeats = lasts.Where(x => x.Last == GameResultType.Defeat).OrderByDescending(x => x.Count)
+        //            .ToList();
+
+        //        List<Temp> others = lasts.Where(x => x.Last != GameResultType.Defeat).ToList();
+
+        //        foreach (var o in defeats)
+        //        {
+        //            var forecast = tempForecasts.First();
+
+        //            forecast.ThreadNumber = index;
+
+        //            index += 1;
+
+        //            if (index > _settings.ThreadNumbers - 1)
+        //                index = 0;
+
+        //            tempForecasts.Remove(forecast);
+        //        }
+
+        //        foreach (var o in others)
+        //        {
+        //            var forecast = tempForecasts.First();
+
+        //            forecast.ThreadNumber = index;
+
+        //            index += 1;
+
+        //            if (index > _settings.ThreadNumbers - 1)
+        //                index = 0;
+
+        //            tempForecasts.Remove(forecast);
+        //        }
+        //    }
+        //}
+
         class Temp
         {
             public GameResultType Last { get; set; }
