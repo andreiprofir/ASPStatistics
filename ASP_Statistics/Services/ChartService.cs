@@ -5,18 +5,17 @@ using System.Threading.Tasks;
 using ASP_Statistics.Enums;
 using ASP_Statistics.JsonModels;
 using ASP_Statistics.Models;
+using ASP_Statistics.Utils;
 
 namespace ASP_Statistics.Services
 {
     public class ChartService : IChartService
     {
         private readonly IAlgorithmService _algorithmService;
-        private readonly IDataService _dataService;
 
-        public ChartService(IAlgorithmService algorithmService, IDataService dataService)
+        public ChartService(IAlgorithmService algorithmService)
         {
             _algorithmService = algorithmService;
-            _dataService = dataService;
         }
 
         public async Task<Dictionary<ChartType, ChartViewModel>> GetGeneralChartsAsync(List<ForecastJson> forecasts, int threadNumbers)
@@ -25,10 +24,12 @@ namespace ASP_Statistics.Services
 
             List<WinLoseCountModel> chartData = await _algorithmService.GetWinLoseCountByThreadNumberAsync(forecasts, threadNumbers);
 
+            result[ChartType.WinLose] = GetWinLoseChart(chartData, threadNumbers);
+
             return result;
         }
 
-        private ChartViewModel GetWinLoseChart(List<ForecastJson> filteredForecasts, GameResultType? gameResultType)
+        private ChartViewModel GetWinLoseChart(List<WinLoseCountModel> chartData, int threadNumbers)
         {
             var winLoseChart = new ChartViewModel
             {
@@ -37,36 +38,32 @@ namespace ASP_Statistics.Services
                 ChartData = new List<ChartData>()
             };
 
-            GameResultType lastResultType =
-                filteredForecasts.FirstOrDefault()?.GameResultType ?? GameResultType.Expectation;
-            string lastLabel = filteredForecasts.FirstOrDefault()?.GameAt.ToString("d");
+            var index = 0;
 
-            int count = 0;
-            int index = 1;
-
-            foreach (ForecastJson forecast in filteredForecasts)
+            for (var i = 0; i < threadNumbers; i++)
             {
-                if (lastResultType == forecast.GameResultType)
-                    count++;
-                else
+                foreach (WinLoseCountModel model in chartData.Where(x => x.ThreadNumber == i))
                 {
-                    if (gameResultType == null || lastResultType == gameResultType)
+                    winLoseChart.ChartData.Add(new ChartData
                     {
-                        winLoseChart.ChartData.Add(new ChartData
-                        {
-                            Color = GetColor(lastResultType),
-                            Label = lastLabel,
-                            X = index++,
-                            Y = count
-                        });
-                    }
-
-                    lastLabel = forecast.GameAt.ToString("d");
-                    lastResultType = forecast.GameResultType;
-                    count = 1;
+                        Label = model.StartSeries.ToString("d"),
+                        Color = HtmlViewHelper.GetColor(model.GameResultType),
+                        X = index++,
+                        Y = model.Count
+                    });
                 }
-            }
 
+                index += 3;
+
+                winLoseChart.ChartData.Add(new ChartData
+                {
+                    Label = DateTimeOffset.Now.ToString("d"),
+                    Color = HtmlViewHelper.GetColor(GameResultType.Expectation),
+                    X = index++,
+                    Y = 0
+                });
+            }
+            
             return winLoseChart;
         }
     }

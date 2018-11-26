@@ -26,7 +26,7 @@ namespace ASP_Statistics.Utils
             CreateMap<SettingsJson, CalculateBankValuesOptions>()
                 .ForMember(dest => dest.Bet, opt => opt.MapFrom(src => src.InitialBetValue));
 
-            CreateMap<StateViewModel, FilterParameters>();
+            CreateMap<StatisticsViewModel, FilterParameters>();
         }
     }
 }

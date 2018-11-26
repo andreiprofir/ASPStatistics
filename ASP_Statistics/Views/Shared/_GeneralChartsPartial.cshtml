@@ -46,7 +46,7 @@
                     indexLabelPlacement: "inside",
                     yValueFormatString: "#",
                     xValueFormatString: "DD MMM, YYYY",
-                    type: "column", //change type to bar, line, area, pie, etc
+                    type: "column",
                     dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLose].ChartData))
 
                 }

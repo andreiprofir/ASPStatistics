@@ -156,8 +156,10 @@ namespace ASP_Statistics.Controllers
             if (excludeRefundResults)
                 filterParameters.ExcludedGameResultType = GameResultType.RefundOrCancellation;
 
+            List<ForecastJson> forecasts = _dataService.GetResults(filterParameters, false);
+            
             Dictionary<ChartType, ChartViewModel> generalChartsData =
-                await _chartService.GetGeneralChartsAsync(_dataService.GetResults(filterParameters), threadNumbers);
+                await _chartService.GetGeneralChartsAsync(forecasts, threadNumbers);
 
             return generalChartsData;
         }

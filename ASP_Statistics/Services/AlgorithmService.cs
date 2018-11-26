@@ -141,8 +141,8 @@ namespace ASP_Statistics.Services
 
             if (forecasts == null || !forecasts.Any()) return result;
 
-            var lastResults = new List<GameResultType>(capacity: threadNumbers);
-            var lastDates = new List<DateTimeOffset>(capacity: threadNumbers);
+            var lastResults = new List<GameResultType>(Enumerable.Repeat(GameResultType.Expectation, threadNumbers));
+            var lastDates = new List<DateTimeOffset>(Enumerable.Repeat(DateTimeOffset.Now, threadNumbers));
 
             for (var i = 0; i < threadNumbers; i++)
             {

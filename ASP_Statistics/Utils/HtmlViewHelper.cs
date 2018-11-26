@@ -71,5 +71,22 @@ namespace ASP_Statistics.Utils
                     return "";
             }
         }
+
+        public static string GetColor(GameResultType gameResultType)
+        {
+            switch (gameResultType)
+            {
+                case GameResultType.Expectation:
+                    return "#6c757d";
+                case GameResultType.Win:
+                    return "#28a745";
+                case GameResultType.Defeat:
+                    return "#dc3545";
+                case GameResultType.RefundOrCancellation:
+                    return "#ffc107";
+                default:
+                    return "#343a40";
+            }
+        }
     }
 }
