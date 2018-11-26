@@ -11,7 +11,7 @@ namespace ASP_Statistics.Services
     {
         Task<StateJson> CalculateNextStateAsync(long forecastId, decimal? betValue = null, bool? allowIncreaseBet = null);
 
-        Task<Dictionary<Month, decimal>> GetCalculatedBankValuesByBetAsync(CalculateBankValuesOptions options,
+        Task<Dictionary<int, Dictionary<Month, decimal>>> GetCalculatedBankValuesByBetAsync(CalculateBankValuesOptions options,
             DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null);
 
         Task<Dictionary<CalculationMethod, decimal>> GetBankValuesByMethodsAsync(CalculateBankValuesOptions options,
@@ -22,8 +22,8 @@ namespace ASP_Statistics.Services
 
         Task<decimal> CalculateBetValueByBankAsync(CalculateBetValueOptions options);
 
-        Task<Dictionary<int, List<WinLoseCountModel>>> GetWinLoseCountByThreadNumber(
-            DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null);
+        Task<List<WinLoseCountModel>> GetWinLoseCountByThreadNumberAsync(List<ForecastJson> forecasts,
+            int threadNumbers);
 
         Task<List<decimal>> GetDefeatChainBets(decimal bet, double coefficient = 2.1D);
     }

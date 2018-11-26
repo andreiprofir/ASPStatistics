@@ -61,6 +61,9 @@ namespace ASP_Statistics.Services
             if (filterParameters.GameResultType != null)
                 query = query.Where(x => x.GameResultType == filterParameters.GameResultType);
 
+            if (filterParameters.ExcludedGameResultType != null)
+                query = query.Where(x => x.GameResultType != filterParameters.ExcludedGameResultType);
+
             return query.ToList();
         }
 

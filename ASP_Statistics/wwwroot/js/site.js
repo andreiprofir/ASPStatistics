@@ -46,3 +46,19 @@ var getCssBgClass = function(threadNumber) {
         return "bg-dark";
     }
 };
+
+var initializeBankValuesByYears = function(url) {
+    var model = {
+        bet: $("#InitialBetValue").val(), 
+        coefficientBankReserve: $("#CoefficientBankReserve").val(), 
+        threadNumbers: $("#ThreadNumbers").val(), 
+        lowerBound: $("#settingsForm #LowerBound").val(), 
+        upperBound: $("#settingsForm #UpperBound").val()
+    };
+    
+    $.post(url,
+        model,
+        function(response) {
+            $("#bankValuesByYearsContainer").html($(response));
+        });
+};

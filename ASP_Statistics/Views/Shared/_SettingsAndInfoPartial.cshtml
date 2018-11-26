@@ -11,6 +11,12 @@
         @await Html.PartialAsync("_SettingsViewModelPartial", Model.Settings)
     </div>
     <div class="col-12 border-bottom">
+        <label class="h4">Bank Values By Years</label>
+        <div id="bankValuesByYearsContainer" class="col">
+            
+        </div>
+    </div>
+    <div class="col-12 border-bottom">
         <label class="h4">Bets Chain</label>
         <div class="input-group mb-3">
             <div id="bets-chain" class="input-group-prepend d-flex w-100">
@@ -25,16 +31,6 @@
                     <i class="fas fa-calculator"></i>
                     Calculate
                 </button>
-            </div>
-        </div>
-    </div>
-    <div class="col-12 border-bottom">
-        <label class="h4">Averages</label>
-        <div class="col">
-            <div class="input-group mb-3">
-                <div class="input-group-prepend">
-                    <span class="input-group-text" id="basic-addon1"></span>
-                </div>
             </div>
         </div>
     </div>
@@ -80,5 +76,7 @@
                     return !oldProp;
                 });
         });
+
+        initializeBankValuesByYears('@Url.Action("GetBankValuesByYearsAsync", "Home")');
     });
 </script>

@@ -31,16 +31,29 @@ namespace ASP_Statistics.Services
             });
         }
 
-        public async Task<Dictionary<Month, decimal>> GetCalculatedBankValuesByBetAsync(CalculateBankValuesOptions options, 
+        public async Task<Dictionary<int, Dictionary<Month, decimal>>> GetCalculatedBankValuesByBetAsync(
+            CalculateBankValuesOptions options,
             DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null)
         {
-            List<ForecastJson> forecasts = _dataService.GetResults(new FilterParameters
+            return await Task.Run(() =>
             {
-                LowerBound = lowerBound, 
-                UpperBound = upperBound
-            });
+                var result = new Dictionary<int, Dictionary<Month, decimal>>();
 
-            return await Task.Run(() => CalculateBankValues(forecasts, options));
+                List<ForecastJson> forecasts = _dataService.GetResults(new FilterParameters
+                {
+                    LowerBound = lowerBound,
+                    UpperBound = upperBound
+                });
+
+                foreach (var group in forecasts.GroupBy(x => x.GameAt.Year))
+                {
+                    Dictionary<Month, decimal> bankValues = CalculateBankValues(group.ToList(), options);
+
+                    result[group.Key] = bankValues;
+                }
+
+                return result;
+            });
         }
 
         public async Task<Dictionary<CalculationMethod, decimal>> GetBankValuesByMethodsAsync(CalculateBankValuesOptions options, 
@@ -98,10 +111,10 @@ namespace ASP_Statistics.Services
             return await Task.Run(() => CalculateBetValue(options));
         }
 
-        public async Task<Dictionary<int, List<WinLoseCountModel>>> GetWinLoseCountByThreadNumber(
-            DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null)
+        public async Task<List<WinLoseCountModel>> GetWinLoseCountByThreadNumberAsync(
+            List<ForecastJson> forecasts, int threadNumbers)
         {
-            return await Task.Run(() => CalculateWinLoseCountByThreads(lowerBound, upperBound));
+            return await Task.Run(() => GetWinLoseCount(forecasts, threadNumbers));
         }
 
         public async Task<List<decimal>> GetDefeatChainBets(decimal bet, double coefficient = 2.1)
@@ -122,55 +135,46 @@ namespace ASP_Statistics.Services
             });
         }
 
-        private Dictionary<int, List<WinLoseCountModel>> CalculateWinLoseCountByThreads(DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null)
-        {
-            var result = new Dictionary<int, List<WinLoseCountModel>>();
-
-            List<ForecastJson> forecasts = _dataService.GetResults(new FilterParameters
-            {
-                LowerBound = lowerBound,
-                UpperBound = upperBound
-            });
-
-            foreach (var group in forecasts.GroupBy(x => x.ThreadNumber))
-            {
-                List<WinLoseCountModel> counts = GetWinLoseCount(group.ToList());
-
-                result[group.Key] = counts;
-            }
-
-            return result;
-        }
-
-        private List<WinLoseCountModel> GetWinLoseCount(List<ForecastJson> forecasts, bool separateCancelResult = false)
+        private List<WinLoseCountModel> GetWinLoseCount(List<ForecastJson> forecasts, int threadNumbers)
         {
             var result = new List<WinLoseCountModel>();
 
-            GameResultType lastResultType =
-                forecasts.FirstOrDefault()?.GameResultType ?? GameResultType.Expectation;
+            if (forecasts == null || !forecasts.Any()) return result;
 
-            var count = 1;
+            var lastResults = new List<GameResultType>(capacity: threadNumbers);
+            var lastDates = new List<DateTimeOffset>(capacity: threadNumbers);
 
-            foreach (ForecastJson forecast in forecasts.Skip(1))
+            for (var i = 0; i < threadNumbers; i++)
             {
-                if ((!separateCancelResult && forecast.GameResultType == GameResultType.RefundOrCancellation) || 
-                    forecast.GameResultType == GameResultType.Expectation)
-                    continue;
+                lastResults[i] = forecasts.FirstOrDefault(x => x.ThreadNumber == i)?.GameResultType ??
+                                 GameResultType.Expectation;
+                lastDates[i] = forecasts.FirstOrDefault(x => x.ThreadNumber == i)?.GameAt ?? DateTimeOffset.Now;
 
-                if (lastResultType == forecast.GameResultType)
+                var count = 1;
+                
+                foreach (ForecastJson forecast in forecasts.Where(x => x.ThreadNumber == i).Skip(1))
                 {
-                    count++;
-                }
-                else
-                {
-                    result.Add(new WinLoseCountModel
+                    if (forecast.GameResultType == GameResultType.Expectation)
+                        continue;
+
+                    if (lastResults[i] == forecast.GameResultType)
                     {
-                        GameResultType = lastResultType,
-                        Count = count
-                    });
+                        count++;
+                    }
+                    else
+                    {
+                        result.Add(new WinLoseCountModel
+                        {
+                            GameResultType = lastResults[i],
+                            Count = count,
+                            StartSeries = lastDates[i],
+                            ThreadNumber = i
+                        });
                     
-                    lastResultType = forecast.GameResultType;
-                    count = 1;
+                        lastResults[i] = forecast.GameResultType;
+                        lastDates[i] = forecast.GameAt;
+                        count = 1;
+                    }
                 }
             }
 

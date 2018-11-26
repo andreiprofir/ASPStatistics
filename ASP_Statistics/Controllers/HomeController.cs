@@ -21,20 +21,24 @@ namespace ASP_Statistics.Controllers
         private readonly IMapper _mapper;
         private readonly IDataService _dataService;
         private readonly IAlgorithmService _algorithmService;
+        private readonly IChartService _chartService;
 
         public HomeController(IDataOldService dataOldService,  
             ISynchronizationService synchronizationService, 
             IMapper mapper, 
             IDataService dataService,
-            IAlgorithmService algorithmService)
+            IAlgorithmService algorithmService, 
+            IChartService chartService)
         {
             _dataOldService = dataOldService;
             _synchronizationService = synchronizationService;
             _mapper = mapper;
             _dataService = dataService;
             _algorithmService = algorithmService;
+            _chartService = chartService;
         }
 
+        [HttpGet]
         public async Task<IActionResult> Index()
         {
             List<ForecastJson> forecasts = _dataService.GetForecasts();
@@ -57,7 +61,7 @@ namespace ASP_Statistics.Controllers
             model.Settings = _mapper.Map<SettingsJson, SettingsViewModel>(settings);
             model.LastState = _mapper.Map<StateJson, StateViewModel>(lastState);
             model.LastState.ThreadNumbers = settings.ThreadNumbers;
-            
+
             InitializeBetAndBankValueLimits(model);
 
             return PartialView("_SettingsAndInfoPartial", model);
@@ -116,37 +120,52 @@ namespace ASP_Statistics.Controllers
         {
             InitializeViewBags();
 
-            return View();
+            SettingsJson settings = _dataService.GetSettings();
+
+            var model = new StatisticsViewModel
+            {
+                ThreadNumbers = settings.ThreadNumbers,
+                LowerBound = settings.LowerBound,
+                UpperBound = settings.UpperBound
+            };
+
+            return View(model);
         }
 
         [HttpPost]
-        public IActionResult FilterForecasts(RequestViewModel model)
+        public async Task<IActionResult> StatisticsAsync(StatisticsViewModel model)
         {
-            List<ForecastJson> filteredForecasts = _dataOldService.Filter(model);
+            FilterParameters filterParameters = _mapper.Map<StatisticsViewModel, FilterParameters>(model);
             
-            return PartialView("_ForecastsTablePartial", 
-                filteredForecasts
-                    //.OrderByDescending(x => x.ShowAt)
-                    //.ThenBy(x => x.Id)
-                    .ToList());
-        }
-
-        [HttpPost]
-        public IActionResult GetCharts(RequestViewModel model)
-        {
-            GameResultType? gameResultType = model.GameResultType;
-            model.GameResultType = null;
-            List<ForecastJson> filteredForecasts = _dataOldService.Filter(model);
+            List<ForecastJson> forecasts = _dataService.GetResults(filterParameters);
             
-            var responseModel = _dataOldService.GetChartData(filteredForecasts, gameResultType, true);
+            var resultModel = new StatisticsResultViewModel
+            {
+                ForecastResults = forecasts,
+                GeneralChartsData = await GetGeneralChartsDataAsync(filterParameters, model.ExcludeRefundResults, model.ThreadNumbers)
+            };
 
-            return PartialView("_ChartsPartial", responseModel);
+            return PartialView("_StatisticsPartial", resultModel);
+        }
+
+        private async Task<Dictionary<ChartType, ChartViewModel>> GetGeneralChartsDataAsync(
+            FilterParameters filterParameters, bool excludeRefundResults, int threadNumbers)
+        {
+            filterParameters.GameResultType = null;
+
+            if (excludeRefundResults)
+                filterParameters.ExcludedGameResultType = GameResultType.RefundOrCancellation;
+
+            Dictionary<ChartType, ChartViewModel> generalChartsData =
+                await _chartService.GetGeneralChartsAsync(_dataService.GetResults(filterParameters), threadNumbers);
+
+            return generalChartsData;
         }
 
         [HttpPost]
-        public IActionResult GetStrategyCharts(RequestViewModel model)
+        public IActionResult GetStrategyCharts(StatisticsViewModel model)
         {
-            List<ForecastJson> data = _dataOldService.Filter(new RequestViewModel {ForecastType = ForecastType.Paid})
+            List<ForecastJson> data = _dataOldService.Filter(new StatisticsViewModel {ForecastType = ForecastType.Paid})
                 .Where(x => x.Coefficient >= 3)
                 //.OrderByDescending(x => x.Coefficient)
                 .ToList();
@@ -209,6 +228,23 @@ namespace ASP_Statistics.Controllers
         public IActionResult Error()
         {
             return View(new ErrorViewModel { RequestId = Activity.Current?.Id ?? HttpContext.TraceIdentifier });
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> GetBankValuesByYearsAsync(decimal bet, double coefficientBankReserve, 
+            int threadNumbers, DateTimeOffset? lowerBound, DateTimeOffset? upperBound)
+        {
+            var options = new CalculateBankValuesOptions
+            {
+                ThreadNumbers = threadNumbers,
+                CoefficientBankReserve = coefficientBankReserve,
+                Bet = bet
+            };
+
+            Dictionary<int, Dictionary<Month, decimal>> model = 
+                await _algorithmService.GetCalculatedBankValuesByBetAsync(options, lowerBound, upperBound);
+
+            return PartialView("_BankValuesByYearsPartial", model);
         }
 
         private void ResetBetValues(List<ForecastViewModel> model)

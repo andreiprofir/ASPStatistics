@@ -110,6 +110,8 @@
                 function(response) {
                     $("#InitialBank").val(response);
 
+                    initializeBankValuesByYears('@Url.Action("GetBankValuesByYearsAsync", "Home")');
+
                     toggleLoader();
                 });
         });
@@ -121,6 +123,8 @@
                 $("#settingsForm").serialize(),
                 function(response) {
                     $("#InitialBetValue").val(response);
+
+                    initializeBankValuesByYears('@Url.Action("GetBankValuesByYearsAsync", "Home")');
 
                     toggleLoader();
                 });

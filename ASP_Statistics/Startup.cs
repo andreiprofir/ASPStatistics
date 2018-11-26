@@ -49,8 +49,8 @@ namespace ASP_Statistics
             services.AddScoped<IDataOldService, DataOldService>();
             services.AddScoped<IGamblingSupportService, GamblingSupportService>();
             services.AddScoped<ISynchronizationService, SynchronizationService>();
-            //services.AddScoped<IDataService, DataService>();
             services.AddScoped<IAlgorithmService, AlgorithmService>();
+            services.AddScoped<IChartService, ChartService>();
 
             services.AddSingleton<IDataService, DataService>(provider =>
             {

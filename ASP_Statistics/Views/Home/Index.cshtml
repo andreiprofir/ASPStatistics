@@ -63,8 +63,8 @@
                     $("#betsForSaveBadge").text(number - 1);
                 }
             });
-
-            var num = $("input[id$='SaveBet']").is(":checked").length;
+            
+            var num = $("input[id$='SaveBet']:checked").length;
 
             if (num == undefined || num < 0)
                 num = 0;

@@ -22,6 +22,11 @@ namespace ASP_Statistics.Utils
                 .ForMember(dest => dest.IncreaseBetStep, opt => opt.MapFrom(src => src.BetValueIncreaseStep));
 
             CreateMap<StateJson, StateViewModel>().ReverseMap();
+
+            CreateMap<SettingsJson, CalculateBankValuesOptions>()
+                .ForMember(dest => dest.Bet, opt => opt.MapFrom(src => src.InitialBetValue));
+
+            CreateMap<StateViewModel, FilterParameters>();
         }
     }
 }

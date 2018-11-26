@@ -1,4 +1,6 @@
-﻿namespace ASP_Statistics.Utils
+﻿using ASP_Statistics.Enums;
+
+namespace ASP_Statistics.Utils
 {
     public static class HtmlViewHelper
     {
@@ -50,6 +52,23 @@
                     return "text-primary";
                 default:
                     return "text-dark";
+            }
+        }
+
+        public static string GetCssClassForTable(GameResultType gameResultType)
+        {
+            switch (gameResultType)
+            {
+                case GameResultType.Expectation:
+                    return "";
+                case GameResultType.Win:
+                    return "table-success";
+                case GameResultType.Defeat:
+                    return "table-danger";
+                case GameResultType.RefundOrCancellation:
+                    return "table-warning";
+                default:
+                    return "";
             }
         }
     }

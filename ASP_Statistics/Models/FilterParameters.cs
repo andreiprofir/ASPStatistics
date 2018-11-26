@@ -12,5 +12,7 @@ namespace ASP_Statistics.Models
         public DateTimeOffset? LowerBound { get; set; }
 
         public DateTimeOffset? UpperBound { get; set; }
+
+        public GameResultType? ExcludedGameResultType { get; set; }
     }
 }

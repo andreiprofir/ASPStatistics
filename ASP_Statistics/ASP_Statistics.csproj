@@ -16,6 +16,9 @@
     <Content Update="Views\Home\EditorTemplates\_ForecastInGridPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>
+    <Content Update="Views\Shared\_BankValuesByYearsPartial.cshtml">
+      <Pack>$(IncludeRazorContentInPack)</Pack>
+    </Content>
     <Content Update="Views\Shared\_StrategyChartsPartial.cshtml">
       <Pack>$(IncludeRazorContentInPack)</Pack>
     </Content>

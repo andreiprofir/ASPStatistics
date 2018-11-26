@@ -1,0 +1,21 @@
+﻿@model StatisticsResultViewModel
+
+
+<div class="col-12">
+    <div id="forecasts-table-container">
+        @await Html.PartialAsync("_ForecastsTablePartial", Model.ForecastResults)
+    </div>
+</div>
+
+
+<div id="charts-container" class="col-12">
+    @await Html.PartialAsync("_GeneralChartsPartial", Model.GeneralChartsData)
+</div>
+
+
+<div class="col-12">
+    <div class="col-12">
+        <h1 class="text-danger">Strategies</h1>
+    </div>
+    <div id="strategy-charts-container" class="col-12"></div>
+</div>

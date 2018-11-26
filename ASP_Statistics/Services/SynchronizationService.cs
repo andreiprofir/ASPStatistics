@@ -21,7 +21,7 @@ namespace ASP_Statistics.Services
         public async Task SynchronizeResultsAsync(bool rewriteAllExistingData = false)
         {
             int? numberOfPages = 1;
-            var saveMethod = SaveMethod.Prepend;
+            var saveMethod = SaveMethod.Append;
 
             if (rewriteAllExistingData)
             {

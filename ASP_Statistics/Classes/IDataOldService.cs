@@ -10,7 +10,7 @@ namespace ASP_Statistics.Classes
     {
         List<ForecastJson> Forecasts { get; set; }
 
-        List<ForecastJson> Filter(RequestViewModel model);
+        List<ForecastJson> Filter(StatisticsViewModel model);
 
         Dictionary<ChartType, ChartViewModel> GetChartData(List<ForecastJson> filteredForecasts, GameResultType? gameResultType, bool excludeCanceled = false);
 

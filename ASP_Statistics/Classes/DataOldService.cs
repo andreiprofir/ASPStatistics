@@ -35,7 +35,7 @@ namespace ASP_Statistics.Classes
                 _forecasts = GetForecasts();
         }
 
-        public List<ForecastJson> Filter(RequestViewModel model)
+        public List<ForecastJson> Filter(StatisticsViewModel model)
         {
             if (model == null)
                 return _forecasts;
