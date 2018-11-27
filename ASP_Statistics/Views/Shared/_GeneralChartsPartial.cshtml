@@ -7,23 +7,62 @@
     <div class="col-12">
         <div id="winLoseChart" style="width: 100%; height:400px;"></div>
     </div>
-    @*<div class="col-12">
-        <div id="winLose4ChartLine" style="width: 100%; height:400px;"></div>
-    </div>
-    <div class="col-12">
-        <div id="winLose4ChartPursuit" style="width: 100%; height:400px;"></div>
-    </div>
     <div class="col-12">
         <div id="winLoseCountsChart" style="width: 100%; height:400px;"></div>
     </div>
     <div class="col-12">
-        <div id="winLoseCounts4Chart" style="width: 100%; height:400px;"></div>
+        <div id="winLoseSeriesCountChart" style="width: 100%; height:400px;"></div>
     </div>
     <div class="col-12">
-        <div id="winLoseRefundCount" style="width: 100%; height:400px;"></div>
-    </div>*@
+        <div id="strategyBanksChart" style="width: 100%; height:800px;"></div>
+    </div>
+    @*<div class="col-12">
+            <div id="winLose4ChartLine" style="width: 100%; height:400px;"></div>
+        </div>
+        <div class="col-12">
+            <div id="winLose4ChartPursuit" style="width: 100%; height:400px;"></div>
+        </div>
+        <div class="col-12">
+            <div id="winLoseCountsChart" style="width: 100%; height:400px;"></div>
+        </div>
+        <div class="col-12">
+            <div id="winLoseCounts4Chart" style="width: 100%; height:400px;"></div>
+        </div>
+        <div class="col-12">
+            <div id="winLoseRefundCount" style="width: 100%; height:400px;"></div>
+        </div>*@
 </div>
 
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("winLoseCountsChart", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.WinLoseCount].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.WinLoseCount].Description" }
+            ],
+            axisX:{
+                labelAngle: 0
+            },
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLoseCount].ChartData))
+
+                }
+            ]
+        });
+        chart.render();
+    });
+</script>
 <script type="text/javascript">
     $(function () {
         var chart = new CanvasJS.Chart("winLoseChart", {
@@ -55,7 +94,93 @@
         chart.render();
     });
 </script>
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("winLoseSeriesCountChart", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.WinLoseSeriesCount].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.WinLoseSeriesCount].Description" }
+            ],
+            axisX:{
+                labelAngle: 0
+            },
+            data: [
+                {
+                    indexLabel: "{y}",
+                    indexLabelFontColor: "#EEEEEE",
+                    indexLabelPlacement: "inside",
+                    yValueFormatString: "#",
+                    type: "column", //change type to bar, line, area, pie, etc
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.WinLoseSeriesCount].ChartData))
+                }
+            ]
+        });
+        chart.render();
+    });
+</script>
+<script type="text/javascript">
+    $(function () {
+        var chart = new CanvasJS.Chart("strategyBanksChart", {
+            zoomEnabled: true,
+            animationEnabled: false,
+            theme: "light2",
+            title: {
+                text: "@Model[ChartType.BankValueChart].Label"
+            },
+            subtitles: [
+                { text: "@Model[ChartType.BankValueChart].Description" }
+            ],
+            axisX:{
+                labelAngle: 0,
+                labelFontSize: 12,
+                labelFontColor: "black",
+                crosshair: {
+                    enabled: true
+                }
+            },
+            axisY:{
+                includeZero: false,
+                crosshair: {
+                    enabled: true
+                }
+            },
+            exportEnabled: true,
+            legend:{
+                cursor:"pointer",
+                verticalAlign: "bottom",
+                horizontalAlign: "left",
+                dockInsidePlotArea: true,
+                itemclick: toogleDataSeries,
+                fontSize: 12
+            },
+            data: [
+                {
+                    showInLegend: true,
+                    name: "@ChartType.BankValueChart.ToString()",
+                    //xValueFormatString: "DD MMM, YYYY",
+                    type: "line",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.BankValueChart].ChartData))
+                }
+            ],
 
+        });
+        chart.render();
+
+        function toogleDataSeries(e){
+            if (typeof(e.dataSeries.visible) === "undefined" || e.dataSeries.visible) {
+                e.dataSeries.visible = false;
+            } else{
+                e.dataSeries.visible = true;
+            }
+            chart.render();
+        }
+    });
+</script>
 @*<script type="text/javascript">
     $(function () {
         var chart = new CanvasJS.Chart("winLose4ChartLine", {

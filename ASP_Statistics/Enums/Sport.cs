@@ -2,9 +2,9 @@
 {
     public enum Sport
     {
-        All,
-        Football,
-        Basketball,
+        All = 0,
+        Football = 1,
+        Basketball = 3,
         Hockey,
         Volleyball,
         Handball,

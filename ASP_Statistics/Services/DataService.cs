@@ -177,6 +177,7 @@ namespace ASP_Statistics.Services
         private static void SetThreadNumbers(List<ForecastJson> forecasts)
         {
             var query = forecasts
+                .Where(x => x.ForecastType == ForecastType.Paid)
                 .GroupBy(x => new { x.GameAt.Year, x.GameAt.Month, x.GameAt.Day });
 
             var index = 0;

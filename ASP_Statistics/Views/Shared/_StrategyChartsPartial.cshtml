@@ -4,10 +4,7 @@
 @model Dictionary<ASP_Statistics.Enums.ChartType, ChartViewModel>
 
 <div class="row">
-    <div class="col-12">
-        <div id="strategyBanksChart" style="width: 100%; height:800px;"></div>
-    </div>
-    <div class="col-12">
+    @*<div class="col-12">
         <div id="strategyBetsChart" style="width: 100%; height:800px;"></div>
     </div>
     <div class="col-12">
@@ -27,7 +24,7 @@
     </div>
     <div class="col-12">
         <div id="profitMinMaxChart" style="width: 100%; height:400px;"></div>
-    </div>
+    </div>*@
 </div>
 
 <script type="text/javascript">
@@ -37,10 +34,10 @@
             animationEnabled: false,
             theme: "light2",
             title: {
-                text: "BANK"
+                text: "@Model[ChartType.BankValueChart].Label"
             },
             subtitles: [
-                { text: "Grafic care arata dinamica bancului" }
+                { text: "@Model[ChartType.BankValueChart].Description" }
             ],
             axisX:{
                 labelAngle: 0,
@@ -66,78 +63,13 @@
                 fontSize: 12
             },
             data: [
-                @*{
-                    showInLegend: true,
-                    name: "@ChartType.FlatBankValue.ToString()",
-                    //xValueFormatString: "DD MMM, YYYY",
-                    type: "line", //change type to bar, line, area, pie, etc
-                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.FlatBankValue].ChartData)),
-                    color: "red"
-                },*@
                 {
                     showInLegend: true,
-                    name: "@ChartType.SoftFlatDagonBankValue.ToString()",
+                    name: "@ChartType.BankValueChart.ToString()",
                     //xValueFormatString: "DD MMM, YYYY",
-                    type: "line", //change type to bar, line, area, pie, etc
-                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValue].ChartData)),
-                    color: "green"
-                },
-                {
-                    showInLegend: true,
-                    name: "@ChartType.SoftFlatDagonBankValue2.ToString()",
-                    //xValueFormatString: "DD MMM, YYYY",
-                    type: "line", //change type to bar, line, area, pie, etc
-                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValue2].ChartData)),
-                    color: "yellow"
-                },
-                @*{
-                    showInLegend: true,
-                    name: "@ChartType.SoftFlatDagonBankValue3.ToString()",
-                    //xValueFormatString: "DD MMM, YYYY",
-                    type: "line", //change type to bar, line, area, pie, etc
-                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValue3].ChartData)),
-                    color: "purple"
-                },
-                {
-                    showInLegend: true,
-                    name: "@ChartType.SoftFlatDagonBankValue4.ToString()",
-                    //xValueFormatString: "DD MMM, YYYY",
-                    type: "line", //change type to bar, line, area, pie, etc
-                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonBankValue4].ChartData)),
-                    color: "pink"
-                },*@
-                @*{
-                    showInLegend: true,
-                    name: "@ChartType.SoftFlatDagonModBankValue.ToString()",
-                    //xValueFormatString: "DD MMM, YYYY",
-                    type: "line", //change type to bar, line, area, pie, etc
-                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValue].ChartData)),
-                    color: "orange"
-                },
-                {
-                    showInLegend: true,
-                    name: "@ChartType.SoftFlatDagonModBankValue2.ToString()",
-                    //xValueFormatString: "DD MMM, YYYY",
-                    type: "line", //change type to bar, line, area, pie, etc
-                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValue2].ChartData)),
-                    color: "black"
-                },
-                {
-                    showInLegend: true,
-                    name: "@ChartType.SoftFlatDagonModBankValue3.ToString()",
-                    //xValueFormatString: "DD MMM, YYYY",
-                    type: "line", //change type to bar, line, area, pie, etc
-                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValue3].ChartData)),
-                    color: "blue"
-                },
-                {
-                    showInLegend: true,
-                    name: "@ChartType.SoftFlatDagonModBankValue4.ToString()",
-                    //xValueFormatString: "DD MMM, YYYY",
-                    type: "line", //change type to bar, line, area, pie, etc
-                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftFlatDagonModBankValue4].ChartData)),
-                    color: "#d64161"
-                },*@
+                    type: "line",
+                    dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.BankValueChart].ChartData))
+                }
             ],
 
         });
@@ -154,7 +86,7 @@
     });
 </script>
 
-<script type="text/javascript">
+@*<script type="text/javascript">
     $(function () {
         var chart = new CanvasJS.Chart("strategyBetsChart", {
             zoomEnabled: true,
@@ -214,7 +146,7 @@
                     dataPoints: @Html.Raw(JsonConvert.SerializeObject(Model[ChartType.SoftDagonBankValueBet].ChartData)),
                     color: "blue"
                 },*@
-                {
+                @*{
                     showInLegend: true,
                     name: "@ChartType.SoftFlatDagonBankValueBet.ToString()",
                     //xValueFormatString: "DD MMM, YYYY",
@@ -292,7 +224,7 @@
             chart.render();
         }
     });
-</script>
+</script>*@
 
 <script type="text/javascript">
     $(function () {

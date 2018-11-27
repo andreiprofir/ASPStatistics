@@ -9,7 +9,12 @@ namespace ASP_Statistics.Services
 {
     public interface IChartService
     {
-        Task<Dictionary<ChartType, ChartViewModel>> GetGeneralChartsAsync(List<ForecastJson> forecasts,
+        Task<Dictionary<ChartType, ChartViewModel>> GetWinLoseChartsAsync(List<ForecastJson> forecasts,
+            int threadNumbers);
+
+        Task<ChartViewModel> GetBankValuesChartAsync(List<ForecastJson> forecasts,
+            decimal initialBank,
+            decimal initialBet,
             int threadNumbers);
     }
 }

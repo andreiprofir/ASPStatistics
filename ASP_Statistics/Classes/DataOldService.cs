@@ -80,7 +80,7 @@ namespace ASP_Statistics.Classes
             model.Add(ChartType.WinLose, winLoseChart);
             model.Add(ChartType.WinLose4Line, winLoseChart4Line);
             model.Add(ChartType.WinLose4Pursuit, winLoseChart4Pursuit);
-            model.Add(ChartType.WinLoseCount, winLoseCountsChart);
+            model.Add(ChartType.WinLoseSeriesCount, winLoseCountsChart);
             model.Add(ChartType.WinLoseCount4, winLoseCounts4Chart);
             model.Add(ChartType.WinLoseRefundCount, winLosePercentage);
 

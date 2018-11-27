@@ -2,17 +2,24 @@
 {
     public enum ChartType
     {
+        WinLose,
+        WinLoseCount,
+        WinLoseSeriesCount,
+
+
+
+
         BankValueChart,
         LoseBankCount,
         BetMinAvgMaxChart,
         BankMaxChart,
         ProfitMinMaxChart,
 
-        WinLose,
+        
         WinLose4Line,
         WinLose4Pursuit,
 
-        WinLoseCount,
+        
         WinLoseCount4,
         WinLoseRefundCount,
 

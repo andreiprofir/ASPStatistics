@@ -135,6 +135,11 @@ namespace ASP_Statistics.Services
             });
         }
 
+        public async Task<List<StateJson>> CalculateStatesAsync(List<ForecastJson> forecasts, decimal initialBank, decimal bet, int threadNumbers, bool allowIncreaseBets)
+        {
+            return await Task.Run(() => CalculateStates(forecasts, initialBank, bet, threadNumbers, allowIncreaseBets));
+        }
+
         private List<WinLoseCountModel> GetWinLoseCount(List<ForecastJson> forecasts, int threadNumbers)
         {
             var result = new List<WinLoseCountModel>();
@@ -250,11 +255,13 @@ namespace ASP_Statistics.Services
                 state.Bets[index] = betValue ?? GetBetValue(state.InitialBet, state.LoseValues[index], currentForecast.Coefficient,
                     settings?.BetValueRoundDecimals ?? 2);
 
+                state.Bank -= state.Bets[index];
+
                 return state;
             }
 
             decimal result = 
-                CalculateResult(state.Bets[index], previousForecast.GameResultType, previousForecast.Coefficient);
+                CalculateResult(lastState.Bets[index], previousForecast.GameResultType, previousForecast.Coefficient);
             
             if (result < 0)
             {
@@ -262,7 +269,10 @@ namespace ASP_Statistics.Services
             }
             else
             {
-                state.Bank += lastState.Bets[index];
+                if (previousForecast.GameResultType == GameResultType.Expectation)
+                    state.Bank += lastState.Bets[index];
+                else
+                    state.Bank += result;
 
                 if (previousForecast.GameResultType == GameResultType.Win)
                     state.LoseValues[index] = 0;
@@ -307,32 +317,40 @@ namespace ASP_Statistics.Services
         private decimal CalculateBankValue(List<ForecastJson> forecasts, decimal bet, 
             double coefficientBankReserve, int threadNumbers)
         {
+            decimal maxBank = CalculateStates(forecasts, 0, bet, threadNumbers, false)
+                .Max(x => x.Bets.Sum() + x.LoseValues.Sum());
+
+            maxBank += maxBank * (decimal) coefficientBankReserve;
+
+            return maxBank;
+        }
+
+        private List<StateJson> CalculateStates(List<ForecastJson> forecasts, decimal initialBank, decimal bet, int threadNumbers, bool allowIncreaseBets)
+        {
             var lastState = new StateJson
             {
+                Bank = initialBank,
                 InitialBet = bet,
-                Bets = Enumerable.Repeat(bet, threadNumbers).ToList()
+                Bets = Enumerable.Repeat(0M, threadNumbers).ToList()
             };
 
             List<ForecastJson> previousForecasts = Enumerable.Repeat((ForecastJson) null, threadNumbers).ToList();
-
-            decimal maxBank = 0;
-
+            var results = new List<StateJson>();
+            
             foreach (ForecastJson forecast in forecasts)
             {
                 StateJson state =
-                    CalculateNextAlgorithmState(forecast, previousForecasts[forecast.ThreadNumber], lastState);
+                    CalculateNextAlgorithmState(forecast, previousForecasts[forecast.ThreadNumber], lastState, allowIncreaseBet: allowIncreaseBets);
 
-                decimal neededValue = state.Bets.Sum() + state.LoseValues.Sum();
-                neededValue += neededValue * (decimal) coefficientBankReserve;
-                
-                if (maxBank < neededValue)
-                    maxBank = neededValue;
+                state.Id = forecast.GameAt.ToUnixTimeMilliseconds();
+
+                results.Add(state);
 
                 lastState = state;
                 previousForecasts[forecast.ThreadNumber] = forecast;
             }
 
-            return maxBank;
+            return results;
         }
 
         private decimal CalculateResult(decimal betValue, GameResultType forecastGameResultType,

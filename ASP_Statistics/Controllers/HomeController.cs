@@ -158,8 +158,15 @@ namespace ASP_Statistics.Controllers
 
             List<ForecastJson> forecasts = _dataService.GetResults(filterParameters, false);
             
-            Dictionary<ChartType, ChartViewModel> generalChartsData =
-                await _chartService.GetGeneralChartsAsync(forecasts, threadNumbers);
+            Dictionary<ChartType, ChartViewModel> generalChartsData = 
+                await _chartService.GetWinLoseChartsAsync(forecasts, threadNumbers);
+
+            filterParameters.GameResultType = null;
+            filterParameters.ExcludedGameResultType = null;
+
+            forecasts = _dataService.GetResults(filterParameters, false);
+
+            generalChartsData[ChartType.BankValueChart] = await _chartService.GetBankValuesChartAsync(forecasts, 433, 1, threadNumbers);
 
             return generalChartsData;
         }

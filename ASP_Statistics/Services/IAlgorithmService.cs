@@ -26,5 +26,8 @@ namespace ASP_Statistics.Services
             int threadNumbers);
 
         Task<List<decimal>> GetDefeatChainBets(decimal bet, double coefficient = 2.1D);
+
+        Task<List<StateJson>> CalculateStatesAsync(List<ForecastJson> forecasts, decimal initialBank, decimal bet,
+            int threadNumbers, bool allowIncreaseBets);
     }
 }
