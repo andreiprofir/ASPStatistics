@@ -15,6 +15,6 @@ namespace ASP_Statistics.Services
         Task<ChartViewModel> GetBankValuesChartAsync(List<ForecastJson> forecasts,
             decimal initialBank,
             decimal initialBet,
-            int threadNumbers);
+            int threadNumbers, bool allowIncreaseBets);
     }
 }

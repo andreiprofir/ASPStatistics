@@ -31,12 +31,13 @@ namespace ASP_Statistics.Services
             return result;
         }
 
-        public async Task<ChartViewModel> GetBankValuesChartAsync(List<ForecastJson> forecasts, decimal initialBank, decimal initialBet, int threadNumbers)
+        public async Task<ChartViewModel> GetBankValuesChartAsync(List<ForecastJson> forecasts, decimal initialBank, 
+            decimal initialBet, int threadNumbers, bool allowIncreaseBets)
         {
             return await Task.Run(async () =>
             {
                 List<StateJson> states =
-                    await _algorithmService.CalculateStatesAsync(forecasts, initialBank, initialBet, threadNumbers, true);
+                    await _algorithmService.CalculateStatesAsync(forecasts, initialBank, initialBet, threadNumbers, allowIncreaseBets);
 
                 return GetBankValueChart(states);
             });

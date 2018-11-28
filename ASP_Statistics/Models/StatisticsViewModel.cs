@@ -18,6 +18,8 @@ namespace ASP_Statistics.Models
 
         public bool ExcludeRefundResults { get; set; } = true;
 
+        public bool AllowIncreaseBets { get; set; } = true;
+
         [DisplayFormat(ApplyFormatInEditMode = true, DataFormatString = "{0:MM/dd/yyyy}")]
         public DateTimeOffset? LowerBound { get; set; }
 

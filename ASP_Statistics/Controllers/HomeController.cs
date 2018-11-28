@@ -142,14 +142,15 @@ namespace ASP_Statistics.Controllers
             var resultModel = new StatisticsResultViewModel
             {
                 ForecastResults = forecasts,
-                GeneralChartsData = await GetGeneralChartsDataAsync(filterParameters, model.ExcludeRefundResults, model.ThreadNumbers)
+                GeneralChartsData = await GetGeneralChartsDataAsync(
+                    filterParameters, model.ExcludeRefundResults, model.ThreadNumbers, model.AllowIncreaseBets)
             };
 
             return PartialView("_StatisticsPartial", resultModel);
         }
 
         private async Task<Dictionary<ChartType, ChartViewModel>> GetGeneralChartsDataAsync(
-            FilterParameters filterParameters, bool excludeRefundResults, int threadNumbers)
+            FilterParameters filterParameters, bool excludeRefundResults, int threadNumbers, bool allowIncreaseBets)
         {
             filterParameters.GameResultType = null;
 
@@ -166,7 +167,7 @@ namespace ASP_Statistics.Controllers
 
             forecasts = _dataService.GetResults(filterParameters, false);
 
-            generalChartsData[ChartType.BankValueChart] = await _chartService.GetBankValuesChartAsync(forecasts, 433, 1, threadNumbers);
+            generalChartsData[ChartType.BankValueChart] = await _chartService.GetBankValuesChartAsync(forecasts, 433, 1, threadNumbers, allowIncreaseBets);
 
             return generalChartsData;
         }
