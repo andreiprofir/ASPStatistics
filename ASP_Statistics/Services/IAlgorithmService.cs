@@ -14,9 +14,6 @@ namespace ASP_Statistics.Services
         Task<Dictionary<int, Dictionary<Month, decimal>>> GetCalculatedBankValuesByBetAsync(CalculateBankValuesOptions options,
             DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null);
 
-        Task<Dictionary<CalculationMethod, decimal>> GetBankValuesByMethodsAsync(CalculateBankValuesOptions options,
-            DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null);
-
         Task<decimal> GetBankValueByBetAndMethodAsync(CalculateBankValuesOptions options, CalculationMethod calculationMethod,
             DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null);
 

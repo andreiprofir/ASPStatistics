@@ -9,7 +9,7 @@ namespace ASP_Statistics.Services
 {
     public interface IDataService
     {
-        List<ForecastJson> GetResults(FilterParameters filterParameters = null, bool reverse = true);
+        List<ForecastJson> GetResults(FilterParameters filterParameters = null, bool reverse = false);
 
         List<ForecastJson> GetForecasts(bool reverse = true);
 

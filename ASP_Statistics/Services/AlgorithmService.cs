@@ -47,27 +47,13 @@ namespace ASP_Statistics.Services
 
                 foreach (var group in forecasts.GroupBy(x => x.GameAt.Year))
                 {
-                    Dictionary<Month, decimal> bankValues = CalculateBankValues(group.ToList(), options);
+                    Dictionary<Month, decimal> bankValues = CalculateBankValues(group.ToList(), options)
+                        .ToDictionary(x => x.Key, y => y.Value.Bank);
 
                     result[group.Key] = bankValues;
                 }
 
                 return result;
-            });
-        }
-
-        public async Task<Dictionary<CalculationMethod, decimal>> GetBankValuesByMethodsAsync(CalculateBankValuesOptions options, 
-            DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null)
-        {
-            return await Task.Run(() =>
-            {
-                List<ForecastJson> forecasts = _dataService.GetResults(new FilterParameters
-                {
-                    LowerBound = lowerBound, 
-                    UpperBound = upperBound
-                }, false);
-
-                return GetBankValuesByMethods(forecasts, options);
             });
         }
 
@@ -82,28 +68,43 @@ namespace ASP_Statistics.Services
                     UpperBound = upperBound
                 }, false);
 
-                Dictionary<CalculationMethod, decimal> banks = GetBankValuesByMethods(forecasts, options);
-
-                return banks[calculationMethod];
+                return GetBankValueByMethod(forecasts, options, calculationMethod, out long? _);
             });
         }
 
-        private Dictionary<CalculationMethod, decimal> GetBankValuesByMethods(List<ForecastJson> forecasts,
-            CalculateBankValuesOptions options)
+        private decimal GetBankValueByMethod(List<ForecastJson> forecasts,
+            CalculateBankValuesOptions options, CalculationMethod calculationMethod, out long? forecastId)
         {
-            Dictionary<Month, decimal> bankValues = CalculateBankValues(forecasts, options);
+            Dictionary<Month, CalculateBankValueResult> bankValues = CalculateBankValues(forecasts, options);
 
-            var result = new Dictionary<CalculationMethod, decimal>
+            decimal bank;
+
+            switch (calculationMethod)
             {
-                [CalculationMethod.Average] = Math.Ceiling(bankValues.Average(x => x.Value)),
-                [CalculationMethod.Min] = Math.Ceiling(bankValues.Min(x => x.Value)),
-                [CalculationMethod.Max] = Math.Ceiling(bankValues.Max(x => x.Value)),
-                [CalculationMethod.SecondMax] = bankValues.Count > 1
-                    ? bankValues.OrderByDescending(x => x.Value).ElementAt(2).Value
-                    : bankValues[0]
-            };
+                case CalculationMethod.Average:
+                    bank = bankValues.Average(x => x.Value.Bank);
+                    forecastId = null;
+                    break;
+                case CalculationMethod.Min:
+                    bank = bankValues.Min(x => x.Value.Bank);
+                    break;
+                case CalculationMethod.SecondMax:
+                    decimal? bankResult = bankValues.OrderByDescending(x => x.Value.Bank)
+                        .FirstOrDefault(x => x.Value.Bank < bankValues.Max(y => y.Value.Bank)).Value?.Bank;
 
-            return result;
+                    bank = bankResult ?? bankValues.FirstOrDefault().Value?.Bank ?? 0;
+                    break;
+                default:
+                    bank = bankValues.Max(x => x.Value.Bank);
+                    break;
+            }
+
+            if (calculationMethod == CalculationMethod.Average)
+                forecastId = null;
+            else
+                forecastId = bankValues.FirstOrDefault(x => x.Value.Bank == bank).Value?.ForecastId;
+
+            return bank;
         }
 
         public async Task<decimal> CalculateBetValueByBankAsync(CalculateBetValueOptions options)
@@ -190,7 +191,7 @@ namespace ASP_Statistics.Services
         {
             List<ForecastJson> forecasts = _dataService.GetResults(new FilterParameters
             {
-                LowerBound = options.LowerBound, 
+                LowerBound = options.LowerBound,
                 UpperBound = options.UpperBound
             }, false);
 
@@ -203,29 +204,66 @@ namespace ASP_Statistics.Services
                 CoefficientBankReserve = options.CoefficientBankReserve
             };
 
-            while (GetBankValuesByMethods(forecasts, bankOptions)[options.CalculationMethod] <= options.Bank)
+            decimal bank = GetBankValueByMethod(forecasts, bankOptions, 
+                options.CalculationMethod, out long? forecastId);
+
+            if (bank > options.Bank)
+                return options.InitialBet;
+
+            forecasts = GetForecastsLoseSeries(forecasts, forecastId, bankOptions.ThreadNumbers);
+
+            do
             {
                 options.InitialBet += options.IncreaseBetStep;
+
                 bankOptions.Bet += options.IncreaseBetStep;
-            }
+                bank = CalculateBankValue(forecasts, bankOptions.Bet, bankOptions.CoefficientBankReserve,
+                    bankOptions.ThreadNumbers).Bank;
+            } while (bank <= options.Bank);
 
             return options.InitialBet;
         }
 
-
-        private Dictionary<Month, decimal> CalculateBankValues(List<ForecastJson> forecasts, CalculateBankValuesOptions options)
+        private List<ForecastJson> GetForecastsLoseSeries(List<ForecastJson> forecasts, long? checkPointForecastId, int threadNumbers)
         {
-            var results = new Dictionary<Month, decimal>();
-            
-            decimal bank = CalculateBankValue(forecasts, options.Bet, options.CoefficientBankReserve, options.ThreadNumbers);
+            ForecastJson forecast = forecasts.FirstOrDefault(x => x.Id == checkPointForecastId);
 
-            results[Month.All] = Math.Ceiling(bank);
+            if (forecast == null) return forecasts;
+
+            var dates = new List<DateTimeOffset>();
+
+            for (var i = 0; i < threadNumbers; i++)
+            {
+                int index = i;
+                
+                dates.Add(forecasts.LastOrDefault(x =>
+                              x.ThreadNumber == index && x.GameResultType == GameResultType.Win &&
+                              x.GameAt < forecast.GameAt.AddDays(-3))?.GameAt ?? forecast.GameAt);
+                dates.Add(forecasts.FirstOrDefault(x =>
+                              x.ThreadNumber == index && x.GameResultType == GameResultType.Win &&
+                              x.GameAt > forecast.GameAt.AddDays(3))?.GameAt ?? forecast.GameAt);
+            }
+
+            DateTimeOffset minDate = dates.Min().AddDays(-3);
+            DateTimeOffset maxDate = dates.Max().AddDays(3);
+
+            return forecasts.Where(x => x.GameAt < maxDate && x.GameAt > minDate).ToList();
+        }
+
+
+        private Dictionary<Month, CalculateBankValueResult> CalculateBankValues(List<ForecastJson> forecasts, CalculateBankValuesOptions options)
+        {
+            var results = new Dictionary<Month, CalculateBankValueResult>();
+            
+            CalculateBankValueResult result = CalculateBankValue(forecasts, options.Bet, options.CoefficientBankReserve, options.ThreadNumbers);
+
+            results[Month.All] = result;
 
             foreach (var group in forecasts.GroupBy(x => x.GameAt.Month))
             {
-                bank = CalculateBankValue(group.ToList(), options.Bet, options.CoefficientBankReserve, options.ThreadNumbers);
+                result = CalculateBankValue(group.ToList(), options.Bet, options.CoefficientBankReserve, options.ThreadNumbers);
 
-                results[(Month) group.Key] = Math.Ceiling(bank);
+                results[(Month) group.Key] = result;
             }
 
             return results;
@@ -241,6 +279,7 @@ namespace ASP_Statistics.Services
                 lastState = _dataService.GetLastState();
 
             StateJson state = lastState.Copy();
+            state.ForecastId = currentForecast.Id;
 
             if (previousForecast?.GameResultType == GameResultType.Expectation)
                 return state;
@@ -314,15 +353,22 @@ namespace ASP_Statistics.Services
             return betValue;
         }
 
-        private decimal CalculateBankValue(List<ForecastJson> forecasts, decimal bet, 
+        private CalculateBankValueResult CalculateBankValue(List<ForecastJson> forecasts, decimal bet, 
             double coefficientBankReserve, int threadNumbers)
         {
-            decimal maxBank = CalculateStates(forecasts, 0, bet, threadNumbers, false)
-                .Max(x => x.Bets.Sum() + x.LoseValues.Sum());
+            List<StateJson> states = CalculateStates(forecasts, 0, bet, threadNumbers, false);
 
+            StateJson maxState = states.OrderByDescending(x => x.Bets.Sum() + x.LoseValues.Sum()).FirstOrDefault();
+            
+            decimal maxBank = maxState?.Bets.Sum() + maxState?.LoseValues.Sum() ?? 0;
+            
             maxBank += maxBank * (decimal) coefficientBankReserve;
-
-            return maxBank;
+            
+            return new CalculateBankValueResult
+            {
+                Bank = Math.Ceiling(maxBank),
+                ForecastId = maxState?.ForecastId
+            };
         }
 
         private List<StateJson> CalculateStates(List<ForecastJson> forecasts, decimal initialBank, decimal bet, int threadNumbers, bool allowIncreaseBets)

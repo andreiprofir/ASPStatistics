@@ -21,5 +21,8 @@ namespace ASP_Statistics.JsonModels
 
         [JsonProperty("lose_values")]
         public List<decimal> LoseValues { get; set; } = Enumerable.Repeat<decimal>(0, 4).ToList();
+
+        [JsonProperty("forecast_id")]
+        public long? ForecastId { get; set; }
     }
 }
