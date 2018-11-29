@@ -10,10 +10,6 @@ namespace ASP_Statistics.Models
 
         public ForecastType ForecastType { get; set; } = ForecastType.Paid;
 
-        public Month? Month { get; set; }
-
-        public int? Year { get; set; }
-
         public int ThreadNumbers { get; set; }
 
         public bool ExcludeRefundResults { get; set; } = true;

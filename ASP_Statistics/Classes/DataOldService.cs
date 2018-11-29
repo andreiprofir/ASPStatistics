@@ -48,13 +48,7 @@ namespace ASP_Statistics.Classes
             if (model.GameResultType != null)
                 query = query.Where(x => x.GameResultType == model.GameResultType);
 
-            if (model.Month != null)
-                query = query.Where(x => x.GameAt.Month == (int) model.Month);
-
-            if (model.Year != null)
-                query = query.Where(x => x.GameAt.Year == model.Year);
-
-            return new List<ForecastJson>(query.OrderByDescending(x => x.GameAt));
+           return new List<ForecastJson>(query.OrderByDescending(x => x.GameAt));
         }
 
         public Dictionary<ChartType, ChartViewModel> GetChartData(List<ForecastJson> filteredForecasts,

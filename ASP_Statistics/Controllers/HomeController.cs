@@ -167,7 +167,7 @@ namespace ASP_Statistics.Controllers
 
             forecasts = _dataService.GetResults(filterParameters, false);
 
-            generalChartsData[ChartType.BankValueChart] = await _chartService.GetBankValuesChartAsync(forecasts, 433, 1, threadNumbers, allowIncreaseBets);
+            generalChartsData[ChartType.BankValueChart] = await _chartService.GetBankValuesChartAsync(forecasts, 2000, 1, threadNumbers, allowIncreaseBets);
 
             return generalChartsData;
         }
