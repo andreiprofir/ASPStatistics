@@ -43,7 +43,7 @@ namespace ASP_Statistics.Services
                 {
                     LowerBound = lowerBound,
                     UpperBound = upperBound
-                });
+                }, false);
 
                 foreach (var group in forecasts.GroupBy(x => x.GameAt.Year))
                 {
@@ -65,7 +65,7 @@ namespace ASP_Statistics.Services
                 {
                     LowerBound = lowerBound, 
                     UpperBound = upperBound
-                });
+                }, false);
 
                 return GetBankValuesByMethods(forecasts, options);
             });
@@ -80,7 +80,7 @@ namespace ASP_Statistics.Services
                 {
                     LowerBound = lowerBound, 
                     UpperBound = upperBound
-                });
+                }, false);
 
                 Dictionary<CalculationMethod, decimal> banks = GetBankValuesByMethods(forecasts, options);
 
@@ -192,7 +192,7 @@ namespace ASP_Statistics.Services
             {
                 LowerBound = options.LowerBound, 
                 UpperBound = options.UpperBound
-            });
+            }, false);
 
             if (forecasts == null || !forecasts.Any()) return options.InitialBet;
 

@@ -137,7 +137,7 @@ namespace ASP_Statistics.Controllers
         {
             FilterParameters filterParameters = _mapper.Map<StatisticsViewModel, FilterParameters>(model);
             
-            List<ForecastJson> forecasts = _dataService.GetResults(filterParameters);
+            List<ForecastJson> forecasts = _dataService.GetResults(filterParameters, true);
             
             var resultModel = new StatisticsResultViewModel
             {

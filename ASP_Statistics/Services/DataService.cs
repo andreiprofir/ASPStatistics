@@ -38,7 +38,7 @@ namespace ASP_Statistics.Services
         private const string StatesFile = "states.json";
         private const string SettingsFile = "settings.json";
 
-        public List<ForecastJson> GetResults(FilterParameters filterParameters = null, bool reverse = true)
+        public List<ForecastJson> GetResults(FilterParameters filterParameters = null, bool reverse = false)
         {
             IEnumerable<ForecastJson> query = _results.AsEnumerable();
 
