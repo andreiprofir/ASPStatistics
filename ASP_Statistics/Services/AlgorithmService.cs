@@ -104,7 +104,7 @@ namespace ASP_Statistics.Services
             else
                 forecastId = bankValues.FirstOrDefault(x => x.Value.Bank == bank).Value?.ForecastId;
 
-            return bank;
+            return Math.Ceiling(bank);
         }
 
         public async Task<decimal> CalculateBetValueByBankAsync(CalculateBetValueOptions options)
@@ -382,11 +382,13 @@ namespace ASP_Statistics.Services
 
             List<ForecastJson> previousForecasts = Enumerable.Repeat((ForecastJson) null, threadNumbers).ToList();
             var results = new List<StateJson>();
+            SettingsJson settings = _dataService.GetSettings();
             
             foreach (ForecastJson forecast in forecasts)
             {
                 StateJson state =
-                    CalculateNextAlgorithmState(forecast, previousForecasts[forecast.ThreadNumber], lastState, allowIncreaseBet: allowIncreaseBets);
+                    CalculateNextAlgorithmState(forecast, previousForecasts[forecast.ThreadNumber], lastState,
+                        settings: settings, allowIncreaseBet: allowIncreaseBets);
 
                 state.Id = forecast.GameAt.ToUnixTimeMilliseconds();
 

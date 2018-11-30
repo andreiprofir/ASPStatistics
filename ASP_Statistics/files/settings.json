@@ -1,1 +1,1 @@
-{"initial_bank":250.0,"initial_bet_value":2.0,"bet_value_round_decimals":2,"allow_increase_bet_value":true,"bet_value_increase_step":0.01,"coefficient_bank_reserve":0.0,"thread_numbers":4,"calculation_method":1,"default_lower_bound":"2018-04-01T00:00:00+03:00","default_upper_bound":null}
+{"initial_bank":250.0,"initial_bet_value":2.0,"bet_value_round_decimals":2,"allow_increase_bet_value":true,"bet_value_increase_step":0.01,"coefficient_bank_reserve":0.0,"thread_numbers":4,"calculation_method":0,"default_lower_bound":"2018-04-01T00:00:00+03:00","default_upper_bound":null}
