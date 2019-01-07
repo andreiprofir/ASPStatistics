@@ -81,7 +81,7 @@ namespace ASP_Statistics.Services
 
         public StateJson GetLastState()
         {
-            return _states.LastOrDefault() ?? new StateJson();
+            return _states.LastOrDefault() ?? StateJson.Build();
         }
 
         public SettingsJson GetSettings()
@@ -144,6 +144,7 @@ namespace ASP_Statistics.Services
                 destForecast.GameResultType = srcForecast.GameResultType;
                 destForecast.ShowAt = srcForecast.ShowAt;
                 destForecast.ThreadNumber = srcForecast.ThreadNumber;
+                destForecast.AllowModification = srcForecast.AllowModification == false ? srcForecast.AllowModification : destForecast.AllowModification;
             }
 
             await SaveForecastsIntoFileAsync(ForecastsFile, new List<ForecastJson>(), SaveMethod.Append, false);

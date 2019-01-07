@@ -17,12 +17,23 @@ namespace ASP_Statistics.JsonModels
         public decimal InitialBet { get; set; }
 
         [JsonProperty("bets")]
-        public List<decimal> Bets { get; set; } = Enumerable.Repeat<decimal>(0, 4).ToList();
+        public List<decimal> Bets { get; set; }
 
         [JsonProperty("lose_values")]
-        public List<decimal> LoseValues { get; set; } = Enumerable.Repeat<decimal>(0, 4).ToList();
+        public List<decimal> LoseValues { get; set; }
 
         [JsonProperty("forecast_id")]
         public long? ForecastId { get; set; }
+
+        public static StateJson Build(int threadNumber = 4)
+        {
+            var state = new StateJson
+            {
+                Bets = Enumerable.Repeat(0M, threadNumber).ToList(),
+                LoseValues = Enumerable.Repeat(0M, threadNumber).ToList()
+            };
+
+            return state;
+        }
     }
 }

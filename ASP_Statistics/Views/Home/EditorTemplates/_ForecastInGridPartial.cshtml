@@ -12,6 +12,7 @@
 
 <div id="@Model.Id" class="card bs-2 hover-pointer hover-shadow @borderClass">
     <input type="hidden" asp-for="Id"/>
+    <input type="hidden" asp-for="AllowModification"/>
     
     <div class="card-header d-flex justify-content-between">
         <span class="text-muted text-uppercase"><i class="fas fa-table-tennis pr-2"></i>@Model.Sport.ToString()</span>
@@ -100,10 +101,10 @@
             value: '@Model.ShowAt.ToString("d")'
         });
 
-        if ($("div[id='@Model.Id'] div[timer]") != undefined) {
+        @*if ($("div[id='@Model.Id'] div[timer]") != undefined) {
             startCountdown($("div[id='@Model.Id'] div[timer]"), new Date(Date.parse('@Model.GameAt.ToString("d")')));
             $("div[id='@Model.Id'] div[timer]").removeProp("timer");
-        }
+        }*@
 
         if ('@isExpectation'.toLowerCase() === 'false') {
             $("#@Model.Id").find(".bet-value-input").prop("readonly", true);

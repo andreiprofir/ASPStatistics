@@ -18,7 +18,7 @@ namespace ASP_Statistics.Services
         }
         
         public async Task<StateJson> CalculateNextStateAsync(long forecastId, decimal? betValue = null,
-            bool? allowIncreaseBet = null)
+            bool? allowIncreaseBet = null, StateJson lastState = null)
         {
             return await Task.Run(() =>
             {
@@ -26,7 +26,7 @@ namespace ASP_Statistics.Services
                 ForecastJson previousForecast = _dataService.GetLastCalculatedForecastByIndex(forecast.ThreadNumber);
                 SettingsJson settings = _dataService.GetSettings();
 
-                return CalculateNextAlgorithmState(forecast, previousForecast, settings: settings,
+                return CalculateNextAlgorithmState(forecast, previousForecast, lastState: lastState, settings: settings,
                     allowIncreaseBet: allowIncreaseBet ?? settings.AllowIncreaseBetValue, betValue: betValue);
             });
         }
@@ -377,7 +377,8 @@ namespace ASP_Statistics.Services
             {
                 Bank = initialBank,
                 InitialBet = bet,
-                Bets = Enumerable.Repeat(0M, threadNumbers).ToList()
+                Bets = Enumerable.Repeat(0M, threadNumbers).ToList(),
+                LoseValues = Enumerable.Repeat(0M, threadNumbers).ToList()
             };
 
             List<ForecastJson> previousForecasts = Enumerable.Repeat((ForecastJson) null, threadNumbers).ToList();

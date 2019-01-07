@@ -9,7 +9,7 @@ namespace ASP_Statistics.Services
 {
     public interface IAlgorithmService
     {
-        Task<StateJson> CalculateNextStateAsync(long forecastId, decimal? betValue = null, bool? allowIncreaseBet = null);
+        Task<StateJson> CalculateNextStateAsync(long forecastId, decimal? betValue = null, bool? allowIncreaseBet = null, StateJson lastState = null);
 
         Task<Dictionary<int, Dictionary<Month, decimal>>> GetCalculatedBankValuesByBetAsync(CalculateBankValuesOptions options,
             DateTimeOffset? lowerBound = null, DateTimeOffset? upperBound = null);

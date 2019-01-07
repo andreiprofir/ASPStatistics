@@ -42,8 +42,7 @@ namespace ASP_Statistics.Classes
 
             IEnumerable<ForecastJson> query = _forecasts;
 
-            if (model.ForecastType != null)
-                query = query.Where(x => x.ForecastType == model.ForecastType);
+            query = query.Where(x => x.ForecastType == model.ForecastType);
 
             if (model.GameResultType != null)
                 query = query.Where(x => x.GameResultType == model.GameResultType);

@@ -1,7 +1,11 @@
 {
   "iisSettings": {
-    "windowsAuthentication": false,
-    "anonymousAuthentication": true,
+    "windowsAuthentication": true,
+    "anonymousAuthentication": false,
+    "iis": {
+      "applicationUrl": "http://localhost/ASP_Statistics",
+      "sslPort": 0
+    },
     "iisExpress": {
       "applicationUrl": "http://localhost:63350",
       "sslPort": 0

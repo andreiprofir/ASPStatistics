@@ -52,6 +52,7 @@ namespace ASP_Statistics.Services
                     forecast.GameResultType = GetGameResultType(existsForecast.GameResultType, forecast.GameResultType);
                     forecast.ShowAt = existsForecast.ShowAt;
                     forecast.BetValue = existsForecast.BetValue;
+                    forecast.AllowModification = existsForecast.AllowModification;
                 }
             }
 

@@ -79,12 +79,16 @@ namespace ASP_Statistics.Controllers
         public async Task<IActionResult> SaveBetsAsync(List<ForecastViewModel> model)
         {
             ResetBetValues(model);
-
+            
             List<ForecastJson> forecasts = _mapper.Map<List<ForecastViewModel>, List<ForecastJson>>(model);
-
+            
             await _dataService.UpdateForecastsAsync(forecasts);
 
             await SaveForecastBetsAsync(model);
+
+            forecasts = _mapper.Map<List<ForecastViewModel>, List<ForecastJson>>(model);
+            
+            await _dataService.UpdateForecastsAsync(forecasts);
 
             return Json("Ok");
         }
@@ -287,15 +291,22 @@ namespace ASP_Statistics.Controllers
         private async Task SaveForecastBetsAsync(List<ForecastViewModel> forecasts)
         {
             IEnumerable<ForecastViewModel> query = forecasts
-                .Where(x => x.SaveBet && x.GameResultType == GameResultType.Expectation && x.BetValue > 0)
+                .Where(x => x.SaveBet && x.GameResultType == GameResultType.Expectation && x.AllowModification)
                 .Reverse();
+
+            List<StateJson> states = new List<StateJson>();
+            StateJson lastState = null;
 
             foreach (var forecast in query)
             {
-                StateJson state = await _algorithmService.CalculateNextStateAsync(forecast.Id, forecast.BetValue);
+                StateJson state = await _algorithmService.CalculateNextStateAsync(forecast.Id, forecast.BetValue, lastState: lastState);
+                lastState = state;
+                forecast.AllowModification = false;
 
-                await _dataService.SaveStateAsync(state);
+                states.Add(state);
             }
+
+            await _dataService.SaveStateAsync(states.ToArray());
         }
 
         private void InitializeViewBags()

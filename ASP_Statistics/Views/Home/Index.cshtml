@@ -51,6 +51,8 @@
                     $("#betsForm").serialize(),
                     function(response) {
                         toggleLoader();
+
+                        window.location.reload();
                     });
             });
 
