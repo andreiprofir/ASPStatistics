@@ -67,7 +67,7 @@ namespace ASP_Statistics.Services
         {
             foreach (ForecastJson forecast in forecasts)
             {
-                forecast.AllowModification = forecast.GameResultType == GameResultType.Expectation;
+                forecast.AllowModification = forecast.GameResultType == GameResultType.Expectation && forecast.AllowModification;
             }
         }
 
