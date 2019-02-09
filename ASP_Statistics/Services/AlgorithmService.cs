@@ -344,7 +344,7 @@ namespace ASP_Statistics.Services
 
         private decimal GetBetValue(decimal initialBet, decimal loseValue, double coefficient, int countOfRoundDecimals = 2)
         {
-            decimal betValue = (initialBet + loseValue) / (decimal) (coefficient - 1);
+            decimal betValue = (initialBet + loseValue) / (decimal) ((coefficient <= 1 ? 2 : coefficient) - 1);
 
             betValue += 5 / (decimal)Math.Pow(10, countOfRoundDecimals);
 
