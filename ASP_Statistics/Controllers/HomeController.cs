@@ -41,8 +41,10 @@ namespace ASP_Statistics.Controllers
         [HttpGet]
         public async Task<IActionResult> Index()
         {
-            List<ForecastJson> forecasts = _dataService.GetForecasts();
-
+            List<ForecastJson> forecasts = _dataService.GetForecasts()
+                .Where(x => x.GameAt > DateTimeOffset.Now.AddDays(-14))
+                .ToList();
+            
             List<ForecastViewModel> model = _mapper.Map<List<ForecastJson>, List<ForecastViewModel>>(forecasts);
 
             await InitializeBetValues(model);

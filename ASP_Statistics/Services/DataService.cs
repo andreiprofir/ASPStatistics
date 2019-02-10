@@ -165,9 +165,6 @@ namespace ASP_Statistics.Services
             else if (fileName == ForecastsFile)
             {
                 _forecasts = GetForecastsForSave(needRewrite ? null : _forecasts, forecasts, saveMethod);
-
-                _forecasts = _forecasts.Where(x => x.GameAt > DateTimeOffset.Now.AddDays(-14)).ToList();
-
                 forecastsForSave = _forecasts;
             }
 
