@@ -13,6 +13,8 @@ namespace ASP_Statistics.Models
 
         public bool AllowIncreaseBetValue { get; set; }
 
+        public bool IncreaseBetValueWhenDefeat { get; set; }
+
         public decimal BetValueIncreaseStep { get; set; }
 
         public double CoefficientBankReserve { get; set; }

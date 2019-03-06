@@ -7,7 +7,9 @@
             <div class="col">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text"><i class="fas fa-piggy-bank"></i></span>
+                        <span class="input-group-text">
+                            <i class="fas fa-piggy-bank"></i>
+                        </span>
                         <span class="input-group-text">Current Bank</span>
                     </div>
                     <input type="number" step="0.01" class="form-control form-control-lg text-warning font-weight-bold" asp-for="@Model.Bank">
@@ -16,7 +18,9 @@
             <div class="col">
                 <div class="input-group mb-3">
                     <div class="input-group-prepend">
-                        <span class="input-group-text h4"><i class="far fa-money-bill-alt"></i></span>
+                        <span class="input-group-text h4">
+                            <i class="far fa-money-bill-alt"></i>
+                        </span>
                         <span class="input-group-text h4">Current Bet Value</span>
                     </div>
                     <input type="number" step="0.01" class="form-control form-control-lg text-warning font-weight-bold" asp-for="@Model.InitialBet">
@@ -52,7 +56,7 @@
                         @for (var i = 0; i < Model.ThreadNumbers; i++)
                         {
                             <td>
-                                <input type="number" class="form-control font-weight-bold bg-transparent @HtmlViewHelper.GetCssClassForTextColor(i)" asp-for="@Model.Bets[i]" step="0.01" />
+                                <input type="number" class="form-control font-weight-bold bg-transparent @HtmlViewHelper.GetCssClassForTextColor(i)" asp-for="@Model.Bets[i]" step="0.01"/>
                             </td>
                         }
                     </tr>
@@ -64,7 +68,19 @@
                         @for (var i = 0; i < Model.ThreadNumbers; i++)
                         {
                             <td>
-                                <input type="number" class="form-control font-weight-bold bg-transparent @HtmlViewHelper.GetCssClassForTextColor(i)" asp-for="@Model.LoseValues[i]" step="0.01" />
+                                <input type="number" class="form-control font-weight-bold bg-transparent @HtmlViewHelper.GetCssClassForTextColor(i)" asp-for="@Model.LoseValues[i]" step="0.01"/>
+                            </td>
+                        }
+                    </tr>
+                    <tr>
+                        <th scope="col">
+                            <i class="fas fa-window-close"></i>
+                            Lose Numbers
+                        </th>
+                        @for (var i = 0; i < Model.ThreadNumbers; i++)
+                        {
+                            <td>
+                                <input type="number" class="form-control font-weight-bold bg-transparent @HtmlViewHelper.GetCssClassForTextColor(i)" asp-for="@Model.LoseNumbers[i]"/>
                             </td>
                         }
                     </tr>
@@ -96,6 +112,22 @@
                                         <span class="input-group-text font-weight-bold">@item.Key</span>
                                     </div>
                                     <input type="number" class="form-control" readonly="readonly" value="@item.Value">
+                                }
+                            </div>
+                        </td>
+                    </tr>
+                    <tr>
+                        <th scope="col">
+                            Coefficient Averages
+                        </th>
+                        <td colspan="@Model.ThreadNumbers">
+                            <div class="input-group">
+                                @foreach (var item in Model.CoefficientAverages)
+                                {
+                                    <div class="input-group-prepend">
+                                        <span class="input-group-text font-weight-bold">@item.Key</span>
+                                    </div>
+                                    <input type="number" class="form-control" readonly="readonly" value="@($"{item.Value:F2}")">
                                 }
                             </div>
                         </td>

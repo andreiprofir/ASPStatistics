@@ -14,10 +14,14 @@ namespace ASP_Statistics.Models
 
         public List<decimal> LoseValues { get; set; }
 
+        public List<int> LoseNumbers { get; set; }
+
         public int ThreadNumbers { get; set; }
 
         public Dictionary<RepresentsValueType, decimal> BetValueLimits { get; set; }
 
         public Dictionary<RepresentsValueType, decimal> BankValueLimits { get; set; }
+
+        public Dictionary<GameResultType, double> CoefficientAverages { get; set; }
     }
 }

@@ -22,6 +22,9 @@ namespace ASP_Statistics.JsonModels
         [JsonProperty("lose_values")]
         public List<decimal> LoseValues { get; set; }
 
+        [JsonProperty("lose_numbers")]
+        public List<int> LoseNumbers { get; set; }
+
         [JsonProperty("forecast_id")]
         public long? ForecastId { get; set; }
 
@@ -30,7 +33,8 @@ namespace ASP_Statistics.JsonModels
             var state = new StateJson
             {
                 Bets = Enumerable.Repeat(0M, threadNumber).ToList(),
-                LoseValues = Enumerable.Repeat(0M, threadNumber).ToList()
+                LoseValues = Enumerable.Repeat(0M, threadNumber).ToList(),
+                LoseNumbers = Enumerable.Repeat(0, threadNumber).ToList()
             };
 
             return state;

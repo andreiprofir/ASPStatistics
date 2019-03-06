@@ -18,6 +18,9 @@ namespace ASP_Statistics.JsonModels
         [JsonProperty("allow_increase_bet_value")]
         public bool AllowIncreaseBetValue { get; set; }
 
+        [JsonProperty("increase_bet_value_when_defeat")]
+        public bool IncreaseBetValueWhenDefeat { get; set; } = true;
+
         [JsonProperty("bet_value_increase_step")]
         public decimal BetValueIncreaseStep { get; set; } = 0.01M;
 

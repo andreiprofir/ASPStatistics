@@ -100,6 +100,9 @@ namespace ASP_Statistics.Controllers
         {
             StateJson state = _mapper.Map<StateViewModel, StateJson>(model);
 
+            if (state.LoseNumbers == null)
+                state.LoseNumbers = Enumerable.Repeat(0, model.LoseValues.Count).ToList();
+
             await _dataService.SaveStateAsync(state);
             
             return Json("Ok");
@@ -323,6 +326,7 @@ namespace ASP_Statistics.Controllers
         private void InitializeBetAndBankValueLimits(SettingsAndInfoViewModel model)
         {
             List<StateJson> stages = _dataService.GetStates();
+            List<ForecastJson> forecasts = _dataService.GetForecasts();
 
             var betValueLimits = new Dictionary<RepresentsValueType, decimal>
             {
@@ -338,8 +342,17 @@ namespace ASP_Statistics.Controllers
                 [RepresentsValueType.Max] = stages.Any() ? stages.Max(x => x.Bank) : 0
             };
 
+            var coefficientAverages = new Dictionary<GameResultType, double>
+            {
+                [GameResultType.Win] = forecasts.Any() ? forecasts.Where(x => x.GameResultType == GameResultType.Win).Average(x => x.Coefficient) : 0,
+                [GameResultType.Defeat] = forecasts.Any() ? forecasts.Where(x => x.GameResultType == GameResultType.Defeat).Average(x => x.Coefficient) : 0,
+                [GameResultType.RefundOrCancellation] = forecasts.Any() ? forecasts.Where(x => x.GameResultType == GameResultType.RefundOrCancellation).Average(x => x.Coefficient) : 0,
+                [GameResultType.Expectation] = forecasts.Any() ? forecasts.Where(x => x.GameResultType == GameResultType.Expectation).Average(x => x.Coefficient) : 0
+            };
+
             model.LastState.BetValueLimits = betValueLimits;
             model.LastState.BankValueLimits = bankValueLimits;
+            model.LastState.CoefficientAverages = coefficientAverages;
         }
     }
 }

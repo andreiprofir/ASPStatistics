@@ -14,7 +14,8 @@ namespace ASP_Statistics
                 Bank = state.Bank,
                 InitialBet = state.InitialBet,
                 Bets = state.Bets.ToList(),
-                LoseValues = state.LoseValues.ToList()
+                LoseValues = state.LoseValues.ToList(),
+                LoseNumbers = state.LoseNumbers.ToList()
             };
         }
 
@@ -34,7 +35,8 @@ namespace ASP_Statistics
                 LowerBound = settings.LowerBound,
                 UpperBound = settings.UpperBound,
                 CalculationMethod = settings.CalculationMethod,
-                AllowIncreaseBetValue = settings.AllowIncreaseBetValue
+                AllowIncreaseBetValue = settings.AllowIncreaseBetValue,
+                IncreaseBetValueWhenDefeat = settings.IncreaseBetValueWhenDefeat
             };
         }
     }

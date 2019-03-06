@@ -38,6 +38,10 @@
                 <label asp-for="AllowIncreaseBetValue"></label>
                 <input type="checkbox" class="form-control" placeholder="Thread Number" aria-label="Thread Number" asp-for="AllowIncreaseBetValue">
             </div>
+            <div class="form-group col text-center">
+                <label asp-for="IncreaseBetValueWhenDefeat"></label>
+                <input type="checkbox" class="form-control" placeholder="Increase Value" aria-label="Increase Value" asp-for="IncreaseBetValueWhenDefeat">
+            </div>
             <div class="form-group col">
                 <label asp-for="BetValueIncreaseStep"></label>
                 <input type="number" class="form-control" placeholder="Thread Number" aria-label="Thread Number" step="0.01" asp-for="BetValueIncreaseStep">

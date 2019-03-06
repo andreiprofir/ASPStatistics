@@ -289,10 +289,14 @@ namespace ASP_Statistics.Services
             if (allowIncreaseBet)
                 SetNewInitialBetValue(state, settings);
 
+            int numberOfLoses = settings?.IncreaseBetValueWhenDefeat ?? false
+                ? state.LoseNumbers[index]
+                : 1;
+
             if (previousForecast == null)
             {
                 state.Bets[index] = betValue ?? GetBetValue(state.InitialBet, state.LoseValues[index], currentForecast.Coefficient,
-                    settings?.BetValueRoundDecimals ?? 2);
+                    settings?.BetValueRoundDecimals ?? 2, numberOfLoses);
 
                 state.Bank -= state.Bets[index];
 
@@ -305,6 +309,7 @@ namespace ASP_Statistics.Services
             if (result < 0)
             {
                 state.LoseValues[index] += lastState.Bets[index];
+                state.LoseNumbers[index] += 1;
             }
             else
             {
@@ -314,11 +319,14 @@ namespace ASP_Statistics.Services
                     state.Bank += result;
 
                 if (previousForecast.GameResultType == GameResultType.Win)
+                {
                     state.LoseValues[index] = 0;
+                    state.LoseNumbers[index] = 0;
+                }
             }
 
             state.Bets[index] = betValue ?? GetBetValue(state.InitialBet, state.LoseValues[index], currentForecast.Coefficient,
-                settings?.BetValueRoundDecimals ?? 2);
+                settings?.BetValueRoundDecimals ?? 2, numberOfLoses);
 
             state.Bank -= state.Bets[index];
 
@@ -342,9 +350,12 @@ namespace ASP_Statistics.Services
             state.InitialBet = CalculateBetValue(options);
         }
 
-        private decimal GetBetValue(decimal initialBet, decimal loseValue, double coefficient, int countOfRoundDecimals = 2)
+        private decimal GetBetValue(decimal initialBet, decimal loseValue, double coefficient, int countOfRoundDecimals = 2, int numberOfLoses = 1)
         {
-            decimal betValue = (initialBet + loseValue) / (decimal) ((coefficient <= 1 ? 2 : coefficient) - 1);
+            numberOfLoses = numberOfLoses > 0 ? numberOfLoses : 1;
+
+            decimal betValue = ((initialBet * numberOfLoses) + loseValue) /
+                               (decimal) ((coefficient <= 1 ? 2 : coefficient) - 1);
 
             betValue += 5 / (decimal)Math.Pow(10, countOfRoundDecimals);
 
@@ -378,7 +389,8 @@ namespace ASP_Statistics.Services
                 Bank = initialBank,
                 InitialBet = bet,
                 Bets = Enumerable.Repeat(0M, threadNumbers).ToList(),
-                LoseValues = Enumerable.Repeat(0M, threadNumbers).ToList()
+                LoseValues = Enumerable.Repeat(0M, threadNumbers).ToList(),
+                LoseNumbers = Enumerable.Repeat(0, threadNumbers).ToList()
             };
 
             List<ForecastJson> previousForecasts = Enumerable.Repeat((ForecastJson) null, threadNumbers).ToList();
