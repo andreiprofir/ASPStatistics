@@ -290,7 +290,7 @@ namespace ASP_Statistics.Services
                 SetNewInitialBetValue(state, settings);
 
             int numberOfLoses = settings?.IncreaseBetValueWhenDefeat ?? false
-                ? state.LoseNumbers[index]
+                ? state.LoseNumbers[index] + 1
                 : 1;
 
             if (previousForecast == null)
