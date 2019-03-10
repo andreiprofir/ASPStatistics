@@ -289,9 +289,8 @@ namespace ASP_Statistics.Services
             if (allowIncreaseBet)
                 SetNewInitialBetValue(state, settings);
 
-            int numberOfLoses = settings?.IncreaseBetValueWhenDefeat ?? false
-                ? state.LoseNumbers[index] + 1
-                : 1;
+            int numberOfLoses = CalculateNumberOfLoses(settings?.IncreaseBetValueWhenDefeat,
+                previousForecast?.GameResultType, state.LoseNumbers[index]);
 
             if (previousForecast == null)
             {
@@ -331,6 +330,18 @@ namespace ASP_Statistics.Services
             state.Bank -= state.Bets[index];
 
             return state;
+        }
+
+        private int CalculateNumberOfLoses(bool? increaseBetValueWhenDefeat,
+            GameResultType? previousForecastGameResultType, int stateLoseNumber)
+        {
+            if (increaseBetValueWhenDefeat == false || previousForecastGameResultType == GameResultType.Win) return 1;
+
+            if (previousForecastGameResultType == GameResultType.RefundOrCancellation && stateLoseNumber == 0) return 1;
+
+            if (increaseBetValueWhenDefeat == true && stateLoseNumber == 0) return stateLoseNumber + 2;
+
+            return stateLoseNumber + 1;
         }
 
         private void SetNewInitialBetValue(StateJson state, SettingsJson settings)
