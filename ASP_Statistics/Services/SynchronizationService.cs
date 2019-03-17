@@ -42,6 +42,8 @@ namespace ASP_Statistics.Services
             List<ForecastJson> existingData = _dataService.GetForecasts();
             List<ForecastJson> forecasts = await _gamblingSupportService.GetForecastsAsync(1);
 
+            forecasts = forecasts.Where(x => x.ForecastType == ForecastType.Paid && x.Coefficient > 1.7).ToList();
+
             foreach (ForecastJson forecast in forecasts)
             {
                 ForecastJson existsForecast = existingData.FirstOrDefault(x => x.Id == forecast.Id);
