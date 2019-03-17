@@ -339,9 +339,7 @@ namespace ASP_Statistics.Services
 
             if (previousForecastGameResultType == GameResultType.RefundOrCancellation && stateLoseNumber == 0) return 1;
 
-            if (increaseBetValueWhenDefeat == true && stateLoseNumber == 0) return stateLoseNumber + 2;
-
-            return stateLoseNumber + 1;
+            return stateLoseNumber + 2;
         }
 
         private void SetNewInitialBetValue(StateJson state, SettingsJson settings)
