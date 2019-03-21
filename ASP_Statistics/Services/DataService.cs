@@ -108,9 +108,10 @@ namespace ASP_Statistics.Services
             await SaveForecastsIntoFileAsync(ResultsFile, forecasts, saveMethod);
         }
 
-        public async Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Append)
+        public async Task SaveForecastsAsync(List<ForecastJson> forecasts, bool resetThreadNumbers = true, 
+            SaveMethod saveMethod = SaveMethod.Append)
         {
-            await SaveForecastsIntoFileAsync(ForecastsFile, forecasts, saveMethod);
+            await SaveForecastsIntoFileAsync(ForecastsFile, forecasts, saveMethod, resetThreadNumbers);
         }
 
         public async Task SaveSettingsAsync(SettingsJson settings)
@@ -148,6 +149,11 @@ namespace ASP_Statistics.Services
             }
 
             await SaveForecastsIntoFileAsync(ForecastsFile, new List<ForecastJson>(), SaveMethod.Append, false);
+        }
+
+        public void InitializeThreadNumbers(List<ForecastJson> forecasts)
+        {
+            SetThreadNumbers(forecasts);
         }
 
         private static async Task SaveForecastsIntoFileAsync(string fileName, List<ForecastJson> forecasts,

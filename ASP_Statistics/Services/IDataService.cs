@@ -25,12 +25,14 @@ namespace ASP_Statistics.Services
 
         Task SaveResultsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Append);
 
-        Task SaveForecastsAsync(List<ForecastJson> forecasts, SaveMethod saveMethod = SaveMethod.Append);
+        Task SaveForecastsAsync(List<ForecastJson> forecasts, bool resetThreadNumbers = true, SaveMethod saveMethod = SaveMethod.Append);
 
         Task SaveSettingsAsync(SettingsJson settings);
 
         Task SaveStateAsync(params StateJson[] states);
 
         Task UpdateForecastsAsync(List<ForecastJson> forecasts);
+
+        void InitializeThreadNumbers(List<ForecastJson> forecasts);
     }
 }

@@ -44,6 +44,8 @@ namespace ASP_Statistics.Services
 
             forecasts = forecasts.Where(x => x.ForecastType == ForecastType.Paid && x.Coefficient > 1.7).ToList();
 
+            _dataService.InitializeThreadNumbers(forecasts);
+
             foreach (ForecastJson forecast in forecasts)
             {
                 ForecastJson existsForecast = existingData.FirstOrDefault(x => x.Id == forecast.Id);
@@ -55,6 +57,7 @@ namespace ASP_Statistics.Services
                     forecast.ShowAt = existsForecast.ShowAt;
                     forecast.BetValue = existsForecast.BetValue;
                     forecast.AllowModification = existsForecast.AllowModification;
+                    forecast.ThreadNumber = existsForecast.ThreadNumber;
                 }
             }
 
@@ -62,7 +65,7 @@ namespace ASP_Statistics.Services
 
             SetModificationRestrictions(forecasts);
 
-            await _dataService.SaveForecastsAsync(forecasts);
+            await _dataService.SaveForecastsAsync(forecasts, false);
         }
 
         private void SetModificationRestrictions(List<ForecastJson> forecasts)
